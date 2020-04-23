@@ -21,7 +21,7 @@ const bonds = require('./routes//api/bonds');
 
 app.use('/api/bonds', bonds);
 
-const port = 3000;
+const port = 80;
 
 
 app.listen(port, () => console.log(`[OK] Server start on port ${port}`));
