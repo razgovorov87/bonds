@@ -253,7 +253,7 @@ export default {
       this.chart.xAxis[0].setExtremes(0.825, 0.910)
     },
     async refreshPage() {
-      this.bonds = await BondsService.getBonds();
+      this.loading = true
       this.filterData()
       this.getScatters()
       this.loading = false
