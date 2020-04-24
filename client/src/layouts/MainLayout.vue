@@ -138,7 +138,7 @@ import Home from '@/views/Home'
 import BondsService from '../BondsService'
   export default {
     data: () => ({
-      drawer: false
+      drawer: true
     }),
     created () {
       this.$vuetify.theme.dark = false

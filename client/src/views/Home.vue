@@ -21,28 +21,70 @@
 
 
     <div class="table mt-5">
-      <v-card>
-        <v-card-title>
-            <v-form @submit.prevent="filterData()">
-              <v-select
-              v-model="typeValue"
-              :items="typeItems"
-              label="Тип"
-              multiple
-              attach
-              chips
-              deletable-chips
-              class="mr-3"
+       <v-skeleton-loader
+        v-if="loading"
+        type="table"
+        ></v-skeleton-loader>
+      <v-card
+       v-else
+      >
+        
+          <v-expansion-panels
+            flat
+          >
+            <v-expansion-panel
+              style="border-bottom: 1px solid #d4d4d4;"
             >
-            </v-select>
-              <v-btn
-                color="primary"
-                type="submit"
-              >
-                Фильтр
-              </v-btn>
-            </v-form>
-        </v-card-title>
+              <v-expansion-panel-header>
+                <v-row no-gutters>
+                  <v-col
+                    cols="12"
+                    class="text-center"
+                  >
+                  <span class="gray--text text-uppercase caption">Фильтры</span>
+                  </v-col>
+                </v-row>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-card-title>
+                  <v-form @submit.prevent="filterData()">
+                      <v-select
+                      v-model="typeValue"
+                      :items="typeItems"
+                      label="Тип"
+                      multiple
+                      attach
+                      chips
+                      deletable-chips
+                      class="mr-3"
+                      autowidth="false"
+                    >
+                      <template v-slot:prepend-item>
+                        <v-list-item
+                          ripple
+                          @click="toggle"
+                        >
+                          <v-list-item-action>
+                            <v-icon :color="typeValue.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
+                          </v-list-item-action>
+                          <v-list-item-content>
+                            <v-list-item-title>Выбрать все</v-list-item-title>
+                          </v-list-item-content>
+                        </v-list-item>
+                        <v-divider class="mt-2"></v-divider>
+                      </template>
+                    </v-select>
+                    <v-btn
+                      color="primary"
+                      type="submit"
+                    >
+                      Фильтр
+                    </v-btn>
+                  </v-form>
+                </v-card-title>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
         <v-data-table
           v-model="selected"
           :headers="headers"
@@ -63,11 +105,8 @@
         </template>
         </v-data-table>
       </v-card>
-        <!-- <v-skeleton-loader
-        v-if="loading"
-        type="table"
-        ></v-skeleton-loader>
-      <HomeTable v-else :constructor-type="'stockChart'" :chart="chart" :items="items" /> -->
+       
+      <!-- <HomeTable v-else :constructor-type="'stockChart'" :chart="chart" :items="items" /> -->
     </div>
     </v-col>
 
@@ -201,6 +240,15 @@ export default {
     }
   },
   methods: {
+    toggle () {
+        this.$nextTick(() => {
+          if (this.likesAllItems) {
+            this.typeValue = []
+          } else {
+            this.typeValue = this.typeItems.slice()
+          }
+        })
+      },
     zoomChart() {
       this.chart.xAxis[0].setExtremes(0.825, 0.910)
     },
@@ -252,8 +300,20 @@ export default {
         }
       })
       this.items = filtered
-      console.log(this.items)
     }
+  },
+  computed: {
+    likesAllItems () {
+        return this.typeValue.length === this.typeItems.length
+      },
+      likesSomeItems () {
+        return this.typeValue.length > 0 && !this.likesAllItems
+      },
+      icon () {
+        if (this.likesAllItems) return 'mdi-close-box'
+        if (this.likesSomeItems) return 'mdi-minus-box'
+        return 'mdi-checkbox-blank-outline'
+      },
   },
   components: {
     HomeTable,
