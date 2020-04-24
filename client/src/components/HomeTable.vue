@@ -9,11 +9,12 @@
           item-key="isin"
           locale="ru-RU"
         >
-        <template v-slot:item.isin="{ item }">
+        <template v-slot:item.name="{ item }">
           <v-btn
-            color="primary"
+            color="primary"           
+            @click="selectScatter(item)"
           >
-            {{item.isin}}
+            {{item.name}}
           </v-btn>
         </template>
         </v-data-table>
@@ -25,9 +26,9 @@ export default {
     data: () => ({
         items: [],
         selected: [],
-        headers: [
-            {text: 'ISIN', align: 'center', value: 'isin', sortable: false},
-            {text: 'Название', value: 'name'},
+        headers: [           
+            {text: 'Название', value: 'name', align: 'center', sortable: false},
+            {text: 'ISIN',  value: 'isin', sortable: false},
             {text: 'Доходность', value: 'profit'},
             {text: 'Дюрация', value: 'duration'},
             {text: 'Тип', value: 'type'},
@@ -38,6 +39,12 @@ export default {
         this.items = this.bonds
     },
     mounted() {
+    },
+    methods: {
+      selectScatter(item){
+        this.$parent.$options.methods.selectScatter(item)
+      }
+      
     },
 }
 </script>

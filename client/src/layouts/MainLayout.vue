@@ -7,7 +7,6 @@
       dark
       clipped
     >
-      <v-toolbar dense></v-toolbar>
       <v-list
       >
 
@@ -30,18 +29,14 @@
       clipped-left
       dense
     >
-      <v-img
-        class="mr-4"
-        src="@/assets/logo.svg"
-        max-height="30px"
-        max-width="30px"
-      >
-      </v-img>
-      <v-toolbar-title class="font-weight-bold">BONDS</v-toolbar-title> 
+      <v-app-bar-nav-icon
+        @click.stop="drawer = !drawer"
+      ></v-app-bar-nav-icon> 
+      <v-toolbar-title class="font-weight-bold">BONDS</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <!-- <v-btn
+      <v-btn
         @click="refreshPage()"
       >
         <v-icon
@@ -50,7 +45,7 @@
           mdi-refresh
         </v-icon>
         Обновить данные
-      </v-btn> -->
+      </v-btn>
 
 
       <v-menu
@@ -117,29 +112,12 @@
       </v-menu>
     </v-app-bar>
 
-    <v-app-bar
-      app
-      dense
-      dark
-      clipped-left
-      color="rgb(26,28,45)"
-      style="top: 48px"
-    >
-      <v-app-bar-nav-icon
-        @click.stop="drawer = !drawer"
-      ></v-app-bar-nav-icon>
-
-      <v-toolbar-title>{{this.$route.name}}</v-toolbar-title>
-    </v-app-bar>
-
-
     <v-content>
-      <v-toolbar dense></v-toolbar>
       <v-container
         class="fill-height d-flex align-start content__wrapper"
         fluid
       >
-          <router-view />
+          <router-view ref="childComponent" />
       </v-container>
     </v-content>
 
@@ -156,6 +134,7 @@ html {
 </style>
 
 <script>
+import Home from '@/views/Home'
 import BondsService from '../BondsService'
   export default {
     data: () => ({
@@ -178,6 +157,9 @@ import BondsService from '../BondsService'
       async logout() {
         await this.$store.dispatch('logout')
         this.$router.push('/login?message=logout')
+      },
+      refreshPage() {
+        this.$refs.childComponent.refreshPage()
       }
     },
     computed: {
@@ -187,6 +169,9 @@ import BondsService from '../BondsService'
       avatar() {
         return this.$store.getters.info.avatar
       }
+    },
+    components: {
+      'child-component': Home
     }
   }
 </script>

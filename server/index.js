@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 
+const bonds = require('./routes//api/bonds');
+
 const app = express();
 
 
@@ -10,14 +12,13 @@ app.use(bodyParser.json());
 app.use(cors());
 
 if(process.env.NODE_ENV === 'production') {
-    app.use('/', express.static(path.join(__dirname, 'client', 'dist')))
+    app.use('/', express.static(path.join(__dirname, '../', 'client', 'dist')))
 
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
-    })
+    app.use('/api/bonds', bonds);
+    // app.get('*', (req, res) => {
+    //     res.sendFile(path.resolve(__dirname, '../', 'server', 'routes', 'api', 'bonds.js'))
+    // })
 }
-
-const bonds = require('./routes//api/bonds');
 
 app.use('/api/bonds', bonds);
 

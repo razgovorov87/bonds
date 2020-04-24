@@ -9,25 +9,14 @@
         elevation="0"
         class="mb-3 d-flex justify-end"
       >
-        <v-btn
-          dark
-          color="rgb(6,8,24)"
-          @click="refreshPage()"
-        >  
-          <v-icon
-            class="mr-2"
-          >
-            mdi-refresh
-          </v-icon>
-          Обновить
-        </v-btn>
       </v-card>
-      <v-card>
+      <v-card
+      >
         <v-skeleton-loader
         v-if="loading"
         type="image"
         ></v-skeleton-loader>
-       <highcharts ref="chart" v-else :options="chartOptions"></highcharts>       
+       <highcharts ref="chart" v-else  :options="chartOptions"></highcharts>       
       </v-card>
 
 
@@ -36,7 +25,7 @@
         v-if="loading"
         type="table"
         ></v-skeleton-loader>
-      <HomeTable v-else :chart="chart" :bonds="bonds" />
+      <HomeTable v-else :constructor-type="'stockChart'" :chart="chart" :bonds="bonds" />
     </div>
     </v-col>
 
@@ -51,6 +40,14 @@
 import HomeTable from '@/components/HomeTable'
 import BondsService from '../BondsService'
 import {Chart} from 'highcharts-vue'
+import Highcharts from "highcharts";
+import exportingInit from "highcharts/modules/exporting";
+import stockInit from "highcharts/modules/stock";
+
+stockInit(Highcharts);
+exportingInit(Highcharts);
+
+
 export default {
   name: 'Home',
   data: () => ({
@@ -58,6 +55,7 @@ export default {
     loading: true,
     scatters: [],
     error: '',
+    chart: [],
     chartOptions: {}
   }),
   async created() {
@@ -73,6 +71,7 @@ export default {
       })
       this.chartOptions = {
       chart: {
+        height: 700,
         type: 'scatter',
           panning: {
             enabled: true,
@@ -148,7 +147,13 @@ export default {
       this.loading = true
       this.bonds = await BondsService.getBonds();
       this.loading = false
+    },
+    selectScatter(item) {
+      console.log(this.chart)
     }
+  },
+  mounted() {
+    
   },
   components: {
     HomeTable,
