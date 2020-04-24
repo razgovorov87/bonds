@@ -21,11 +21,53 @@
 
 
     <div class="table mt-5">
-        <v-skeleton-loader
+      <v-card>
+        <v-card-title>
+            <v-form @submit.prevent="filterData()">
+              <v-select
+              v-model="typeValue"
+              :items="typeItems"
+              label="Тип"
+              multiple
+              attach
+              chips
+              deletable-chips
+              class="mr-3"
+            >
+            </v-select>
+              <v-btn
+                color="primary"
+                type="submit"
+              >
+                Фильтр
+              </v-btn>
+            </v-form>
+        </v-card-title>
+        <v-data-table
+          v-model="selected"
+          :headers="headers"
+          :items-per-page="15"
+          :items="items"
+          class="elevation-2"
+          show-select
+          item-key="isin"
+          locale="ru-RU"
+        >
+        <template v-slot:item.name="{ item }">
+          <v-btn
+            color="primary"           
+            @click="selectScatter(item)"
+          >
+            {{item.name}}
+          </v-btn>
+        </template>
+        </v-data-table>
+      </v-card>
+        <!-- <v-skeleton-loader
         v-if="loading"
         type="table"
         ></v-skeleton-loader>
-      <HomeTable v-else :constructor-type="'stockChart'" :chart="chart" :bonds="bonds" />
+      <HomeTable v-else :constructor-type="'stockChart'" :chart="chart" :items="items" /> -->
     </div>
     </v-col>
 
@@ -52,23 +94,42 @@ export default {
   name: 'Home',
   data: () => ({
     bonds: [],
+    typeItems: [
+          'Биржевая облигация',
+          'Государственная облигация',
+          'Корпоративная облигация',
+          'Муниципальная облигация',
+          'Облигационный федеральный займ',
+          'Облигация МФО',
+          'Облигация центрального банка',
+          'Региональная облигация',
+        ],
+        typeValue: [],
+        selected: [],
+        headers: [           
+            {text: 'Название', value: 'name', align: 'center', sortable: false},
+            {text: 'ISIN',  value: 'isin', sortable: false},
+            {text: 'Доходность', value: 'profit'},
+            {text: 'Дюрация', value: 'duration'},
+            {text: 'Цена послед.', value: 'last_price'},
+            {text: 'Лучший спрос', value: 'best_spros'},
+            {text: 'Лучшее предл.', value: 'best_predl'},
+            {text: 'Оборот', value: 'oborot'},
+            {text: 'Тип', value: 'type'}
+        ],
     loading: true,
     scatters: [],
+    items: [],
     error: '',
     chart: [],
     chartOptions: {}
   }),
   async created() {
+    this.typeValue = this.typeItems
     try {
       this.bonds = await BondsService.getBonds();
-      this.bonds.map(bond => {
-        this.scatters.push({
-          id: bond.isin,
-          name: bond.name,
-          x: bond.duration,
-          y: bond.profit
-        })
-      })
+      this.items = this.bonds
+      this.getScatters()
       this.chartOptions = {
       chart: {
         height: 700,
@@ -125,7 +186,7 @@ export default {
             }
           },
           tooltip: {
-                headerFormat: '<b>{point.point.name}</b><br>',
+                headerFormat: '<b>{point.point.name}</b><br><small>{point.point.id}</small><br><br>',
                 pointFormat: 'Дюрация: {point.x} лет<br> Доходность: {point.y}%'
             }
         }
@@ -144,16 +205,56 @@ export default {
       this.chart.xAxis[0].setExtremes(0.825, 0.910)
     },
     async refreshPage() {
-      this.loading = true
       this.bonds = await BondsService.getBonds();
+      this.filterData()
+      this.getScatters()
       this.loading = false
     },
-    selectScatter(item) {
-      console.log(this.chart)
+    getScatters() {
+      this.items.map(bond => {
+        this.scatters.push({
+          id: bond.isin,
+          name: bond.name,
+          x: bond.duration,
+          y: bond.profit
+        })
+      })
+    },
+    async filterData(types) {
+      this.loading = true
+      this.bonds = await BondsService.getBonds();
+      const typesName = this.typeValue
+      const filtered = this.bonds.filter(function(bond) {
+        switch(bond.type) {
+          case typesName[0]:
+             return bond;
+          break;
+          case typesName[1]:
+             return bond;
+          break;
+          case typesName[2]:
+             return bond;
+          break;
+          case typesName[3]:
+             return bond;
+          break;
+          case typesName[4]:
+             return bond;
+          break;
+          case typesName[5]:
+             return bond;
+          break;
+          case typesName[6]:
+             return bond;
+          break;
+          case typesName[7]:
+             return bond;
+          break;
+        }
+      })
+      this.items = filtered
+      console.log(this.items)
     }
-  },
-  mounted() {
-    
   },
   components: {
     HomeTable,
