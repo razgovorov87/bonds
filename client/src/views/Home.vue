@@ -215,6 +215,13 @@ export default {
                 enabled: true,
                 lineColor: 'rgb(100,100,100)'
               },
+              click: function() {
+                  this.series.chart.update({
+                    tooltip: {
+                      enabled: true
+                  }
+                });
+              }
             }
           },
           states: {
@@ -225,8 +232,9 @@ export default {
             }
           },
           tooltip: {
-                headerFormat: '<b>{point.point.name}</b><br><small>{point.point.id}</small><br><br>',
-                pointFormat: 'Дюрация: {point.x} лет<br> Доходность: {point.y}%'
+                headerFormat: '<b>{point.point.name}</b><br>',
+                pointFormat: 'Дюрация: {point.x} лет<br> Доходность: {point.y}%<br>Цена послед.: {point.last_price} ₽<br>Лучший спрос: {point.best_spros}<br>Лучшее предл.: {point.best_predl}<br>Оборот: {point.oborot}<br>',
+                footerFormat: '<span style="font-size: 10px">{point.point.id}</span>'
             }
         }
       },
@@ -249,8 +257,18 @@ export default {
           }
         })
       },
-    zoomChart() {
-      this.chart.xAxis[0].setExtremes(0.825, 0.910)
+    selectScatter(item) {
+      const self = item
+      const point = this.chart.series[0].data.filter(function(elem) {
+        if (elem.id === self.isin) {
+          return elem
+        }
+      })
+      window.scrollTo(0,0)
+      this.chart.xAxis[0].setExtremes(item.duration - 0.1, item.duration + 0.1)
+      this.chart.yAxis[0].setExtremes(item.profit - 1, item.profit + 1)
+      
+      point[0].setState('hover')
     },
     async refreshPage() {
       this.loading = true
@@ -263,12 +281,16 @@ export default {
         this.scatters.push({
           id: bond.isin,
           name: bond.name,
+          last_price: bond.last_price,
+          best_spros: bond.best_spros,
+          best_predl: bond.best_predl,
+          oborot: bond.oborot,
           x: bond.duration,
           y: bond.profit
         })
       })
     },
-    async filterData(types) {
+    async filterData() {
       this.bonds = await BondsService.getBonds();
       const typesName = this.typeValue
       const filtered = this.bonds.filter(function(bond) {
