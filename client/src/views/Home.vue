@@ -221,7 +221,6 @@ export default {
       })
     },
     async filterData(types) {
-      this.loading = true
       this.bonds = await BondsService.getBonds();
       const typesName = this.typeValue
       const filtered = this.bonds.filter(function(bond) {
