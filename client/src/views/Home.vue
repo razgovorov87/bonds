@@ -41,7 +41,7 @@
                     cols="12"
                     class="text-center"
                   >
-                  <span class="gray--text text-uppercase caption">Фильтры</span>
+                  <span class="gray--text text-uppercase caption">Фильтпы</span>
                   </v-col>
                 </v-row>
               </v-expansion-panel-header>
@@ -116,7 +116,6 @@
 </style>
 
 <script>
-import HomeTable from '@/components/HomeTable'
 import BondsService from '../BondsService'
 import {Chart} from 'highcharts-vue'
 import Highcharts from "highcharts";
@@ -230,13 +229,25 @@ export default {
           },
         }
       },
+      navigator: {
+        enabled: true,
+        series: {
+          data: this.scatters,
+          type: 'scatter',
+          lineWidth: 0,
+          marker: {
+            enabled: true,
+            radius: 4
+          }
+        }
+      },
       tooltip: {
         enabled: true,
         headerFormat: '<span style="font-size: 10px">{point.point.id}</span><br><b>{point.point.name}</b><br>',
         pointFormat: 'Дюрация: {point.x} лет<br> Доходность: {point.y}%<br>Цена послед.: {point.last_price} ₽<br>Лучший спрос: {point.best_spros}<br>Лучшее предл.: {point.best_predl}<br>Оборот: {point.oborot}<br>',
       },
       series: [{
-        data: this.scatters,
+        data: this.scatters
       }]
     }
     this.loading = false
@@ -269,7 +280,7 @@ export default {
     },
     resetZoom(){
       this.chart.xAxis[0].setExtremes(0, 5)
-      this.chart.yAxis[0].setExtremes(-20, 20)
+      this.chart.yAxis[0].setExtremes(-5, 20)
     },
     async refreshPage() {
       this.loading = true
@@ -347,7 +358,6 @@ export default {
       },
   },
   components: {
-    HomeTable,
     highcharts: Chart
   }
 }
