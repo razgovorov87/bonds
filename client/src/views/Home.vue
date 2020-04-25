@@ -43,38 +43,85 @@
               <v-expansion-panel-content>
                 <v-card-title>
                   <v-form @submit.prevent="filterData()">
-                      <v-select
-                      v-model="typeValue"
-                      :items="typeItems"
-                      label="Тип"
-                      multiple
-                      attach
-                      chips
-                      deletable-chips
-                      class="mr-3"
-                      autowidth="false"
+                    <v-row
+                      align="center"
+                      justify="space-between"
                     >
-                      <template v-slot:prepend-item>
-                        <v-list-item
-                          ripple
-                          @click="toggle"
+
+                      <v-col
+                        cols="4"
+                      >
+
+                      <v-text-field
+                        v-model="filterName"
+                        label="Название"
+                      >
+                        asdasd
+                      </v-text-field>
+
+                      <v-text-field
+                        v-model="filterIsin"
+                        label="ISIN"
                         >
-                          <v-list-item-action>
-                            <v-icon :color="typeValue.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
-                          </v-list-item-action>
-                          <v-list-item-content>
-                            <v-list-item-title>Выбрать все</v-list-item-title>
-                          </v-list-item-content>
-                        </v-list-item>
-                        <v-divider class="mt-2"></v-divider>
-                      </template>
-                    </v-select>
-                    <v-btn
-                      color="primary"
-                      type="submit"
+                        asdasd
+                      </v-text-field>
+
+                      </v-col>
+
+                      <v-col
+                        cols="8"
+                      >
+                        <v-select
+                          v-model="typeValue"
+                          :items="typeItems"
+                          label="Тип"
+                          multiple
+                          attach
+                          chips
+                          deletable-chips
+                          class="mr-3"
+                          autowidth="false"
+                        >
+                          <template v-slot:prepend-item>
+                            <v-list-item
+                              ripple
+                              @click="toggle"
+                            >
+                              <v-list-item-action>
+                                <v-icon :color="typeValue.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
+                              </v-list-item-action>
+                              <v-list-item-content>
+                                <v-list-item-title>Выбрать все</v-list-item-title>
+                              </v-list-item-content>
+                            </v-list-item>
+                            <v-divider class="mt-2"></v-divider>
+                          </template>
+                        </v-select>
+                      </v-col>
+
+                    </v-row>
+
+                    <v-row
+                      justify="end"
                     >
-                      Фильтр
-                    </v-btn>
+
+                    
+                      <v-col
+                        cols="1"
+                      >
+                        <v-btn
+                          color="primary"
+                          type="submit"
+                        >
+                          Фильтр
+                        </v-btn>
+
+                      </v-col>
+
+
+                    </v-row>
+
+                   
                   </v-form>
                 </v-card-title>
               </v-expansion-panel-content>
@@ -125,6 +172,8 @@ export default {
   name: 'Home',
   data: () => ({
     bonds: [],
+    filterIsin: '',
+    filterName: '',
     typeItems: [
           'Биржевая облигация',
           'Государственная облигация',
@@ -153,6 +202,7 @@ export default {
     items: [],
     error: '',
     chart: [],
+    selectPoint: [],
     chartOptions: {}
   }),
   async created() {
@@ -189,13 +239,16 @@ export default {
         minRange: 0.5,
         title: {
           text: 'Дюрация, лет'
-        }
+        },
+        minorTickInterval: 1,
+        startOnTick: true,
+        endOnTick: true
       },
       yAxis: {
         minRange: 1,
         title: {
           text: 'Доходность, %'
-        }
+        },
       },
       legend: {
           enabled: false
@@ -237,7 +290,6 @@ export default {
         }
       },
       tooltip: {
-        enabled: true,
         headerFormat: '<span style="font-size: 10px">{point.point.id}</span><br><b>{point.point.name}</b><br>',
         pointFormat: 'Дюрация: {point.x} лет<br> Доходность: {point.y}%<br>Цена послед.: {point.last_price}<br>Лучший спрос: {point.best_spros}<br>Лучшее предл.: {point.best_predl}<br>Оборот: {point.oborot}<br>',
       },
@@ -245,7 +297,9 @@ export default {
         data: this.scatters
       }]
     }
+
     this.loading = false
+
     } catch (e) {
       this.error = e.message
     }
@@ -262,6 +316,9 @@ export default {
       },
     selectScatter(item) {
       this.selected = []
+      if(this.selectPoint[0]) {
+        this.selectPoint[0].setState('normal')
+      }
       this.items = this.bonds
       const self = item
       const point = this.chart.series[0].data.filter(function(elem) {
@@ -269,11 +326,11 @@ export default {
           return elem
         }
       })
-      window.scrollTo(0,0)
-      this.chart.xAxis[0].setExtremes(item.duration, item.duration)
-      this.chart.yAxis[0].setExtremes(item.profit, item.profit)      
+      this.selectPoint = point
+      this.selectPoint[0].setState('hover')
+      window.scrollTo(0,70)
       point[0].setState('hover')
-
+      console.log(this.selected)
       const itemsArr = this.items.filter(function(elem) {
 
         if(elem.isin !== self.isin) {
@@ -285,9 +342,7 @@ export default {
       this.items = itemsArr
     },
     resetZoom(){
-      // Тут надо вызывать event у resetzoom
-      this.chart.xAxis[0].setExtremes(0, 5)
-      this.chart.yAxis[0].setExtremes(-5, 20)
+      this.chart.zoomOut()
     },
     async refreshPage() {
       this.loading = true
@@ -295,6 +350,7 @@ export default {
       this.loading = false
       setTimeout(() => {
         this.chart.series[0].setData(this.scatters)
+        this.chart.navigator.series[0].data = this.scatters
       }, 0)
     },
     getScatters() {
@@ -344,7 +400,24 @@ export default {
           break;
         }
       })
+
+      if(this.filterIsin) {
+        const isin = this.filterIsin
+        filtered.filter(item => {
+          return item.isin.indexOf(isin) > -1 
+        })
+        
+      }
+
+      if(this.filterName) {
+        const name = this.filterName
+        filtered.filter(item => {
+          return item.name.indexOf(name) > -1
+        })
+      }
+
       this.items = filtered
+
       this.getScatters()
       setTimeout(() => {
         this.chart.series[0].setData(this.scatters)
