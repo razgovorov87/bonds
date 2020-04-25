@@ -50,6 +50,7 @@
 
       <v-btn
         @click="refreshPage()"
+        class="mr-2"
       >
         <v-icon
           class="mr-2"

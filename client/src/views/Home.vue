@@ -3,13 +3,8 @@
 
     <v-col
       cols="12"
+      style="padding-top: 0;"
     >
-      <v-card
-        color="rgba(0, 0, 0, 0)"
-        elevation="0"
-        class="mb-3 d-flex justify-end"
-      >
-      </v-card>
       <v-card
       >
         <v-skeleton-loader
@@ -244,7 +239,7 @@ export default {
       tooltip: {
         enabled: true,
         headerFormat: '<span style="font-size: 10px">{point.point.id}</span><br><b>{point.point.name}</b><br>',
-        pointFormat: 'Дюрация: {point.x} лет<br> Доходность: {point.y}%<br>Цена послед.: {point.last_price} ₽<br>Лучший спрос: {point.best_spros}<br>Лучшее предл.: {point.best_predl}<br>Оборот: {point.oborot}<br>',
+        pointFormat: 'Дюрация: {point.x} лет<br> Доходность: {point.y}%<br>Цена послед.: {point.last_price}<br>Лучший спрос: {point.best_spros}<br>Лучшее предл.: {point.best_predl}<br>Оборот: {point.oborot}<br>',
       },
       series: [{
         data: this.scatters
@@ -273,8 +268,8 @@ export default {
         }
       })
       window.scrollTo(0,0)
-      this.chart.xAxis[0].setExtremes(item.duration - 0.1, item.duration + 0.1)
-      this.chart.yAxis[0].setExtremes(item.profit - 1, item.profit + 1)
+      this.chart.xAxis[0].setExtremes(item.duration, item.duration)
+      this.chart.yAxis[0].setExtremes(item.profit, item.profit)
       
       point[0].setState('hover')
     },
