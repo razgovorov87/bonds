@@ -227,12 +227,11 @@ export default {
       navigator: {
         enabled: true,
         series: {
-          data: this.scatters,
           type: 'scatter',
           lineWidth: 0,
           marker: {
             enabled: true,
-            radius: 4
+            radius: 2
           }
         }
       },
@@ -268,12 +267,15 @@ export default {
         }
       })
       window.scrollTo(0,0)
+      console.log(point)
+      point[0].color = '#EF5350'
       this.chart.xAxis[0].setExtremes(item.duration, item.duration)
       this.chart.yAxis[0].setExtremes(item.profit, item.profit)
       
       point[0].setState('hover')
     },
     resetZoom(){
+      // Тут надо вызывать event у resetzoom
       this.chart.xAxis[0].setExtremes(0, 5)
       this.chart.yAxis[0].setExtremes(-5, 20)
     },
