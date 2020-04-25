@@ -37,6 +37,18 @@
       <v-spacer></v-spacer>
 
       <v-btn
+        @click="resetZoom()"
+        class="mr-2"
+      >
+        <v-icon
+          class="mr-2"
+        >
+          mdi-magnify-minus-outline
+        </v-icon>
+        Сбросить zoom
+      </v-btn>
+
+      <v-btn
         @click="refreshPage()"
       >
         <v-icon
@@ -44,7 +56,7 @@
         >
           mdi-refresh
         </v-icon>
-        Обновить данные
+        Обновить
       </v-btn>
 
 
@@ -160,6 +172,9 @@ import BondsService from '../BondsService'
       },
       refreshPage() {
         this.$refs.childComponent.refreshPage()
+      },
+      resetZoom() {
+        this.$refs.childComponent.resetZoom()
       }
     },
     computed: {

@@ -105,8 +105,6 @@
         </template>
         </v-data-table>
       </v-card>
-       
-      <!-- <HomeTable v-else :constructor-type="'stockChart'" :chart="chart" :items="items" /> -->
     </div>
     </v-col>
 
@@ -171,7 +169,10 @@ export default {
       this.getScatters()
       this.chartOptions = {
       chart: {
-        height: 700,
+        height: 750,
+        amimation: {
+          duration: 500
+        },
         type: 'scatter',
           panning: {
             enabled: true,
@@ -191,11 +192,13 @@ export default {
         text: 'Облигации'
       },
       xAxis: {
+        minRange: 0.5,
         title: {
-          text: 'Дюрация(лет)'
+          text: 'Дюрация, лет'
         }
       },
       yAxis: {
+        minRange: 1,
         title: {
           text: 'Доходность, %'
         }
@@ -205,7 +208,8 @@ export default {
       },
       plotOptions: {
         series: {
-          turboThreshold: 2000
+          turboThreshold: 2000,
+          stickyTracking: false
         },
         scatter: {
           marker: {
@@ -215,14 +219,7 @@ export default {
                 enabled: true,
                 lineColor: 'rgb(100,100,100)'
               },
-              click: function() {
-                  this.series.chart.update({
-                    tooltip: {
-                      enabled: true
-                  }
-                });
-              }
-            }
+            },
           },
           states: {
             hover: {
@@ -231,12 +228,12 @@ export default {
               }
             }
           },
-          tooltip: {
-                headerFormat: '<b>{point.point.name}</b><br>',
-                pointFormat: 'Дюрация: {point.x} лет<br> Доходность: {point.y}%<br>Цена послед.: {point.last_price} ₽<br>Лучший спрос: {point.best_spros}<br>Лучшее предл.: {point.best_predl}<br>Оборот: {point.oborot}<br>',
-                footerFormat: '<span style="font-size: 10px">{point.point.id}</span>'
-            }
         }
+      },
+      tooltip: {
+        enabled: true,
+        headerFormat: '<span style="font-size: 10px">{point.point.id}</span><br><b>{point.point.name}</b><br>',
+        pointFormat: 'Дюрация: {point.x} лет<br> Доходность: {point.y}%<br>Цена послед.: {point.last_price} ₽<br>Лучший спрос: {point.best_spros}<br>Лучшее предл.: {point.best_predl}<br>Оборот: {point.oborot}<br>',
       },
       series: [{
         data: this.scatters,
@@ -270,13 +267,20 @@ export default {
       
       point[0].setState('hover')
     },
+    resetZoom(){
+      this.chart.xAxis[0].setExtremes(0, 5)
+      this.chart.yAxis[0].setExtremes(-20, 20)
+    },
     async refreshPage() {
       this.loading = true
-      this.filterData()
-      this.getScatters()
+      await this.filterData()
       this.loading = false
+      setTimeout(() => {
+        this.chart.series[0].setData(this.scatters)
+      }, 0)
     },
     getScatters() {
+      this.scatters = []
       this.items.map(bond => {
         this.scatters.push({
           id: bond.isin,
@@ -289,6 +293,7 @@ export default {
           y: bond.profit
         })
       })
+
     },
     async filterData() {
       this.bonds = await BondsService.getBonds();
@@ -322,6 +327,10 @@ export default {
         }
       })
       this.items = filtered
+      this.getScatters()
+      setTimeout(() => {
+        this.chart.series[0].setData(this.scatters)
+      }, 0)
     }
   },
   computed: {
