@@ -41,7 +41,7 @@
                     cols="12"
                     class="text-center"
                   >
-                  <span class="gray--text text-uppercase caption">Фильтпы</span>
+                  <span class="gray--text text-uppercase caption">Фильтры</span>
                   </v-col>
                 </v-row>
               </v-expansion-panel-header>
