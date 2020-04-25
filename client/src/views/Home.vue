@@ -211,7 +211,8 @@ export default {
             states: {
               hover: {
                 enabled: true,
-                lineColor: 'rgb(100,100,100)'
+                lineColor: 'rgb(100,100,100)',
+                fillColor: '#EF5350'
               },
             },
           },
@@ -260,6 +261,8 @@ export default {
         })
       },
     selectScatter(item) {
+      this.selected = []
+      this.items = this.bonds
       const self = item
       const point = this.chart.series[0].data.filter(function(elem) {
         if (elem.id === self.isin) {
@@ -267,12 +270,19 @@ export default {
         }
       })
       window.scrollTo(0,0)
-      console.log(point)
-      point[0].color = '#EF5350'
       this.chart.xAxis[0].setExtremes(item.duration, item.duration)
-      this.chart.yAxis[0].setExtremes(item.profit, item.profit)
-      
+      this.chart.yAxis[0].setExtremes(item.profit, item.profit)      
       point[0].setState('hover')
+
+      const itemsArr = this.items.filter(function(elem) {
+
+        if(elem.isin !== self.isin) {
+          return elem
+        }
+      })
+      itemsArr.unshift(self)
+      this.selected.push(self)
+      this.items = itemsArr
     },
     resetZoom(){
       // Тут надо вызывать event у resetzoom
