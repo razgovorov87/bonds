@@ -48,7 +48,23 @@
         Сбросить zoom
       </v-btn>
 
+
+
       <v-btn
+        v-if="timerDisplay"
+        disabled
+        class="mr-2"
+      >
+        <v-icon
+          class="mr-2"
+        >
+          mdi-refresh
+        </v-icon>
+        00:{{currentTime}}
+      </v-btn>
+
+      <v-btn
+        v-else
         @click="refreshPage()"
         class="mr-2"
       >
@@ -151,7 +167,10 @@ import Home from '@/views/Home'
 import BondsService from '../BondsService'
   export default {
     data: () => ({
-      drawer: true
+      drawer: true,
+      timerDisplay: false,      
+      currentTime: 59,
+      timer: null
     }),
     created () {
       this.$vuetify.theme.dark = false
@@ -167,12 +186,30 @@ import BondsService from '../BondsService'
       }
     },
     methods: {
+      startTimer() {
+        this.timer = setInterval(() => {
+            this.currentTime--
+            if(this.currentTime < 10) {
+              this.currentTime = '0' + this.currentTime
+            }
+        }, 1000)
+      },
+      stopTimer() {
+        clearTimeout(this.timer)
+      },
       async logout() {
         await this.$store.dispatch('logout')
         this.$router.push('/login?message=logout')
       },
       refreshPage() {
+        this.timerDisplay = true
+        console.log(this.timerDisplay)
         this.$refs.childComponent.refreshPage()
+        this.startTimer()
+        setTimeout(() => {
+          this.stopTimer()
+          this.timerDisplay = false
+        }, 60*1000);
       },
       resetZoom() {
         this.$refs.childComponent.resetZoom()

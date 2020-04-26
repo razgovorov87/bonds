@@ -203,7 +203,7 @@ export default {
     error: '',
     chart: [],
     selectPoint: [],
-    chartOptions: {}
+    chartOptions: {},
   }),
   async created() {
     this.typeValue = this.typeItems
@@ -330,7 +330,6 @@ export default {
       this.selectPoint[0].setState('hover')
       window.scrollTo(0,70)
       point[0].setState('hover')
-      console.log(this.selected)
       const itemsArr = this.items.filter(function(elem) {
 
         if(elem.isin !== self.isin) {
@@ -346,6 +345,7 @@ export default {
     },
     async refreshPage() {
       this.loading = true
+      this.bonds = await BondsService.getBonds();
       await this.filterData()
       this.loading = false
       setTimeout(() => {
@@ -370,7 +370,6 @@ export default {
 
     },
     async filterData() {
-      this.bonds = await BondsService.getBonds();
       const typesName = this.typeValue
       const filtered = this.bonds.filter(function(bond) {
         switch(bond.type) {
@@ -401,22 +400,24 @@ export default {
         }
       })
 
+      let finalArr = filtered
+
       if(this.filterIsin) {
-        const isin = this.filterIsin
-        filtered.filter(item => {
+        const isin = this.filterIsin.toUpperCase()
+        finalArr = finalArr.filter(item => {
           return item.isin.indexOf(isin) > -1 
         })
         
       }
 
       if(this.filterName) {
-        const name = this.filterName
-        filtered.filter(item => {
+        const name = this.filterName.toUpperCase()
+        finalArr = finalArr.filter(item => {
           return item.name.indexOf(name) > -1
+          
         })
       }
-
-      this.items = filtered
+      this.items = finalArr
 
       this.getScatters()
       setTimeout(() => {
