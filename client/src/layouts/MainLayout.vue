@@ -186,7 +186,8 @@ import BondsService from '../BondsService'
       }
     },
     methods: {
-      startTimer() {
+      startButtonTimer() {
+        this.currentTime = 59
         this.timer = setInterval(() => {
             this.currentTime--
             if(this.currentTime < 10) {
@@ -194,7 +195,7 @@ import BondsService from '../BondsService'
             }
         }, 1000)
       },
-      stopTimer() {
+      stopButtonTimer() {
         clearTimeout(this.timer)
       },
       async logout() {
@@ -203,11 +204,10 @@ import BondsService from '../BondsService'
       },
       refreshPage() {
         this.timerDisplay = true
-        console.log(this.timerDisplay)
         this.$refs.childComponent.refreshPage()
-        this.startTimer()
+        this.startButtonTimer()
         setTimeout(() => {
-          this.stopTimer()
+          this.stopButtonTimer()
           this.timerDisplay = false
         }, 60*1000);
       },

@@ -36,52 +36,67 @@
                     cols="12"
                     class="text-center"
                   >
-                  <span class="gray--text text-uppercase caption">Фильтры</span>
+                  <v-chip class="gray--text text-uppercase caption ma-0">Фильтры</v-chip>
                   </v-col>
                 </v-row>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-card-title>
-                  <v-form @submit.prevent="filterData()">
+                  <v-form 
+                    @submit.prevent="filterData()" 
+                    style="min-width: 100%"
+                  >
                     <v-row
                       align="center"
                       justify="space-between"
                     >
 
+                      <v-row
+                      justify="center"
+                      >
+
                       <v-col
                         cols="4"
                       >
-
-                      <v-text-field
-                        v-model="filterName"
-                        label="Название"
-                      >
-                        asdasd
-                      </v-text-field>
-
-                      <v-text-field
-                        v-model="filterIsin"
-                        label="ISIN"
+                        <v-text-field
+                          v-model="filterName"
+                          label="Название"
+                          outlined
                         >
-                        asdasd
-                      </v-text-field>
-
+                          asdasd
+                        </v-text-field>
                       </v-col>
 
+
                       <v-col
-                        cols="8"
+                        cols="4"
+                      >
+                        <v-text-field
+                          v-model="filterIsin"
+                          label="ISIN"
+                          outlined
+                          >
+                          asdasd
+                        </v-text-field>
+                      </v-col>
+
+                      </v-row>
+
+                      <v-col
+                        cols="12"
                       >
                         <v-select
                           v-model="typeValue"
                           :items="typeItems"
                           label="Тип"
                           multiple
-                          attach
-                          chips
+                          outlined
+                          small-chips
                           deletable-chips
-                          class="mr-3"
+                          class="mr-3 subtitle-2"
                           autowidth="false"
                         >
+
                           <template v-slot:prepend-item>
                             <v-list-item
                               ripple
@@ -96,6 +111,9 @@
                             </v-list-item>
                             <v-divider class="mt-2"></v-divider>
                           </template>
+
+
+
                         </v-select>
                       </v-col>
 
@@ -213,7 +231,7 @@ export default {
       this.getScatters()
       this.chartOptions = {
       chart: {
-        height: 750,
+        height: 700,
         amimation: {
           duration: 500
         },
@@ -340,18 +358,18 @@ export default {
       this.selected.push(self)
       this.items = itemsArr
     },
-    resetZoom(){
+    resetZoom() {
       this.chart.zoomOut()
     },
     async refreshPage() {
       this.loading = true
       this.bonds = await BondsService.getBonds();
-      await this.filterData()
+      this.filterData()
       this.loading = false
-      setTimeout(() => {
-        this.chart.series[0].setData(this.scatters)
-        this.chart.navigator.series[0].data = this.scatters
-      }, 0)
+      // setTimeout(() => {
+      //   this.chart.series[0].setData(this.scatters)
+      //   this.chart.navigator.series[0].data = this.scatters
+      // }, 0)
     },
     getScatters() {
       this.scatters = []
