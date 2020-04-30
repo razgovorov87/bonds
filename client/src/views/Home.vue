@@ -325,13 +325,7 @@ export default {
     successSnackbar: false,
     successSnackbarText: '',
     groups: [],
-    bonds: [
-      {id: 1, name: 'asdnasd', isin: '123456'},
-      {id: 1, name: 'asdnasd', isin: '123'},
-      {id: 1, name: 'asdnasd', isin: '456789'},
-      {id: 1, name: 'asdnasd', isin: '45327'},
-      {id: 1, name: 'asdnasd', isin: '453456'}
-    ],
+    bonds: [],
     filterIsin: '',
     filterName: '',
     typeItems: [
@@ -369,7 +363,7 @@ export default {
     try {
       this.typeValue = this.typeItems
       this.groups = await this.$store.dispatch('fetchUserGroup')
-      // this.bonds = await BondsService.getBonds();
+      this.bonds = await BondsService.getBonds();
       this.items = this.bonds
       this.getScatters()
       this.chartOptions = {
@@ -529,7 +523,7 @@ export default {
     },
     async refreshPage() {
       this.loading = true
-      // this.bonds = await BondsService.getBonds();
+      this.bonds = await BondsService.getBonds();
       this.filterData()
       this.loading = false
       // setTimeout(() => {
