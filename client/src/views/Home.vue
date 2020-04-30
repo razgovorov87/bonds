@@ -27,123 +27,228 @@
           <v-expansion-panels
             flat
           >
+
             <v-expansion-panel
               style="border-bottom: 1px solid #d4d4d4;"
             >
               <v-expansion-panel-header>
                 <v-row no-gutters>
                   <v-col
-                    cols="12"
+                    cols="6"
                     class="text-center"
                   >
-                  <v-chip class="gray--text text-uppercase caption ma-0">Фильтры</v-chip>
+                    <v-chip class="gray--text text-uppercase caption ma-0">Фильтры</v-chip>
+                  </v-col>
+                  <v-col
+                    cols="6"
+                    class="text-center"
+                  >
+                    <v-chip class="gray--text text-uppercase caption ma-0">Мои группы</v-chip>
                   </v-col>
                 </v-row>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-card-title>
-                  <v-form 
-                    @submit.prevent="filterData()" 
-                    style="min-width: 100%"
-                  >
-                    <v-row
-                      align="center"
-                      justify="space-between"
-                    >
+                <v-card
+                  elevation="0"
+                >
+                  
+                  <v-row>
 
-                      <v-row
-                      justify="center"
-                      >
+                    <v-col>
 
-                      <v-col
-                        cols="4"
-                      >
-                        <v-text-field
-                          v-model="filterName"
-                          label="Название"
-                          outlined
+                        <v-form 
+                          @submit.prevent="filterData()" 
+                          style="min-width: 100%"
                         >
-                          asdasd
-                        </v-text-field>
-                      </v-col>
-
-
-                      <v-col
-                        cols="4"
-                      >
-                        <v-text-field
-                          v-model="filterIsin"
-                          label="ISIN"
-                          outlined
+                          <v-row
+                            align="center"
+                            justify="space-between"
                           >
-                          asdasd
-                        </v-text-field>
-                      </v-col>
 
-                      </v-row>
-
-                      <v-col
-                        cols="12"
-                      >
-                        <v-select
-                          v-model="typeValue"
-                          :items="typeItems"
-                          label="Тип"
-                          multiple
-                          outlined
-                          small-chips
-                          deletable-chips
-                          class="mr-3 subtitle-2"
-                          autowidth="false"
-                        >
-
-                          <template v-slot:prepend-item>
-                            <v-list-item
-                              ripple
-                              @click="toggle"
+                            <v-row
+                              justify="center"
                             >
-                              <v-list-item-action>
-                                <v-icon :color="typeValue.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
-                              </v-list-item-action>
-                              <v-list-item-content>
-                                <v-list-item-title>Выбрать все</v-list-item-title>
-                              </v-list-item-content>
-                            </v-list-item>
-                            <v-divider class="mt-2"></v-divider>
-                          </template>
+
+                            <v-col
+                              cols="4"
+                            >
+                              <v-text-field
+                                v-model="filterName"
+                                label="Название"
+                                outlined
+                              >
+                                asdasd
+                              </v-text-field>
+                            </v-col>
+
+
+                            <v-col
+                              cols="4"
+                            >
+                              <v-text-field
+                                v-model="filterIsin"
+                                label="ISIN"
+                                outlined
+                                >
+                                asdasd
+                              </v-text-field>
+                            </v-col>
+
+                            </v-row>
+
+                            <v-col
+                              cols="12"
+                            >
+                              <v-select
+                                v-model="typeValue"
+                                :items="typeItems"
+                                label="Тип"
+                                multiple
+                                outlined
+                                small-chips
+                                deletable-chips
+                                class="mr-3 subtitle-2"
+                                autowidth="false"
+                              >
+
+                                <template v-slot:prepend-item>
+                                  <v-list-item
+                                    ripple
+                                    @click="toggle"
+                                  >
+                                    <v-list-item-action>
+                                      <v-icon :color="typeValue.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
+                                    </v-list-item-action>
+                                    <v-list-item-content>
+                                      <v-list-item-title>Выбрать все</v-list-item-title>
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                  <v-divider class="mt-2"></v-divider>
+                                </template>
 
 
 
-                        </v-select>
-                      </v-col>
+                              </v-select>
+                            </v-col>
 
-                    </v-row>
+                          </v-row>
 
-                    <v-row
-                      justify="end"
-                    >
+                          <v-row
+                            justify="end"
+                          >
 
-                    
-                      <v-col
-                        cols="1"
+                          
+                            <v-col
+                              cols="2"
+                            >
+                              <v-btn
+                                color="primary"
+                                type="submit"
+                              >
+                                Фильтр
+                              </v-btn>
+
+                            </v-col>
+
+
+                          </v-row>
+
+                        
+                        </v-form>
+
+                    </v-col>
+
+
+                    <v-col>
+
+                      <v-card
+                        elevation="0"
+                        class="d-flex justify-end flex-column"
                       >
-                        <v-btn
-                          color="primary"
-                          type="submit"
-                        >
-                          Фильтр
-                        </v-btn>
+                            <v-list class="mb-3">
+                              <v-list-item v-for="group in groups" :key="group.name" class="elevation-2">
+                                <v-list-item-title><span class="font-weight-bold mr-2">Название:</span>{{group.name}}</v-list-item-title>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                  color="success"
+                                  class="font-weight-bold mr-1"
+                                >
+                                  Показать
+                                </v-btn>
+                                <v-btn
+                                  color="red"
+                                  @click="groupDelete(group)"
+                                >
+                                  <v-icon
+                                    color="white"
+                                  >
+                                    mdi-close
+                                  </v-icon>
+                                </v-btn>
+                              </v-list-item>
+                            </v-list>
 
-                      </v-col>
+                          <v-dialog v-model="dialogAddUserGroup" persistent max-width="600px">
+                            <template v-slot:activator="{ on }">
+                              <v-btn color="primary" dark v-on="on" max-width="300px">Создать новую группу</v-btn>
+                            </template>
+                            <v-card>
+                              <v-card-title>
+                                <span class="headline">Создание группы</span>
+                              </v-card-title>
+                              <v-card-text>
+                                <v-container>
+                                  <v-row>
+                                    <v-col cols="12" sm="12" md="12">
+                                      <v-text-field label="Название группы" v-model="userGroupName" required></v-text-field>
+                                    </v-col>
+                                  </v-row>
+                                </v-container>
+                              </v-card-text>
+                              <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="dialogAddUserGroup = false">Закрыть</v-btn>
+                                <v-btn color="primary" @click="showSnackbar()">Создать</v-btn>
+                              </v-card-actions>
+                            </v-card>
+                          </v-dialog>
+
+                      </v-card>
+
+                      <v-snackbar
+                        v-model="userGroupSnackbar"
+                        :timeout="snackbarTimeout"
+                        bottom
+                        right
+                      >
+                      Выбрано облигаций: {{countSelectBonds}}
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="info"
+                        @click="addUserGroup()"
+                      >
+                        Добавить
+                      </v-btn>
+                      <v-btn
+                        text
+                        color="red"
+                        class="font-weight-bold"
+                        @click="userGroupSnackbar = false"
+                      >
+                        Отмена
+                      </v-btn>
+                      </v-snackbar>
+
+                    </v-col>
 
 
-                    </v-row>
 
-                   
-                  </v-form>
-                </v-card-title>
+                  </v-row>
+
+                </v-card>
               </v-expansion-panel-content>
             </v-expansion-panel>
+
           </v-expansion-panels>
         <v-data-table
           v-model="selected"
@@ -168,6 +273,30 @@
     </div>
     </v-col>
 
+    <v-snackbar
+        v-model="successSnackbar"
+        :timeout="5000"
+        color="success"
+        bottom
+        right
+    >
+    <v-icon
+        class="mr-2"
+        color="white"
+    >
+        mdi-check-circle-outline
+    </v-icon>
+    {{successSnackbarText}}
+    <v-spacer></v-spacer>
+    <v-btn
+        text
+        color="white"
+        class="font-weight-bold"
+        @click="successSnackbar = false"
+    >
+        Закрыть
+    </v-btn>
+    </v-snackbar>
   </v-row>    
 </template>
 
@@ -189,7 +318,20 @@ exportingInit(Highcharts);
 export default {
   name: 'Home',
   data: () => ({
-    bonds: [],
+    dialogAddUserGroup: false,
+    userGroupName: '',
+    userGroupSnackbar: false,
+    snackbarTimeout: 0,
+    successSnackbar: false,
+    successSnackbarText: '',
+    groups: [],
+    bonds: [
+      {id: 1, name: 'asdnasd', isin: '123456'},
+      {id: 1, name: 'asdnasd', isin: '123'},
+      {id: 1, name: 'asdnasd', isin: '456789'},
+      {id: 1, name: 'asdnasd', isin: '45327'},
+      {id: 1, name: 'asdnasd', isin: '453456'}
+    ],
     filterIsin: '',
     filterName: '',
     typeItems: [
@@ -224,9 +366,10 @@ export default {
     chartOptions: {},
   }),
   async created() {
-    this.typeValue = this.typeItems
     try {
-      this.bonds = await BondsService.getBonds();
+      this.typeValue = this.typeItems
+      this.groups = await this.$store.dispatch('fetchUserGroup')
+      // this.bonds = await BondsService.getBonds();
       this.items = this.bonds
       this.getScatters()
       this.chartOptions = {
@@ -254,6 +397,7 @@ export default {
         text: 'Облигации'
       },
       xAxis: {
+        min: 0,
         minRange: 0.5,
         title: {
           text: 'Дюрация, лет'
@@ -304,6 +448,11 @@ export default {
           marker: {
             enabled: true,
             radius: 2
+          }
+        },
+        xAxis: {
+          labels: {
+            enabled: false
           }
         }
       },
@@ -358,12 +507,29 @@ export default {
       this.selected.push(self)
       this.items = itemsArr
     },
+    showSnackbar() {
+      this.dialogAddUserGroup = false
+      this.userGroupSnackbar = true
+    },
+    async addUserGroup() {
+      this.userGroupSnackbar = false
+      const groupData = {
+        name: this.userGroupName,
+        bonds: this.selected
+      }
+      await this.$store.dispatch('createUserGroup', groupData)
+      this.successSnackbar = true
+      this.successSnackbarText = 'Группа успешно создана'
+      this.selected = []
+      this.userGroupName = ''
+
+    },
     resetZoom() {
       this.chart.zoomOut()
     },
     async refreshPage() {
       this.loading = true
-      this.bonds = await BondsService.getBonds();
+      // this.bonds = await BondsService.getBonds();
       this.filterData()
       this.loading = false
       // setTimeout(() => {
@@ -455,6 +621,12 @@ export default {
         if (this.likesSomeItems) return 'mdi-minus-box'
         return 'mdi-checkbox-blank-outline'
       },
+      countSelectBonds() {
+        return this.selected.length
+      },
+      groupsName() {
+        return this.$store.getters.groups
+      }
   },
   components: {
     highcharts: Chart
