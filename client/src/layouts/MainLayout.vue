@@ -19,6 +19,41 @@
           </v-list-item-content>
         </v-list-item>
 
+        <v-list-group
+          prepend-icon="mdi-account"
+        >
+          <template v-slot:activator>
+            <v-list-item-title>Профиль</v-list-item-title>
+          </template>
+
+          <v-list 
+            dense
+            dark
+          >
+
+            <v-list-item 
+              link
+              to="/lockscreen"
+            >
+              <v-list-item-icon>
+                <v-icon>mdi-lock-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Заблокировать</v-list-item-title>
+            </v-list-item>
+
+            <v-list-item 
+              link
+              @click="logout"
+            >
+              <v-list-item-icon>
+                <v-icon>mdi-logout</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Выйти</v-list-item-title>
+            </v-list-item>
+
+          </v-list>
+        </v-list-group>
+
       </v-list>
     </v-navigation-drawer>
 
@@ -76,70 +111,25 @@
         Обновить
       </v-btn>
 
-
-      <v-menu
-        offset-y
-        bottom
+      <v-btn
+        icon
+        @click.stop="settingsDrawer = !settingsDrawer"
       >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            color="rgba(0, 0, 0, 0)"
-            v-on="on"
-          >
-          <v-avatar
-            v-if="avatar"
-            size="36px"
-            class="mr-2"
-          >
-            <img :src="avatar" alt="avatar">
-          </v-avatar>
-          <v-icon
-            v-else
-          >
-            mdi-account-outline
-          </v-icon>
-          <v-icon>mdi-chevron-down</v-icon>
-        </v-btn>
-        </template>
-
-        <v-list dense
-          color="rgb(25,30,58)"
-          class="pa-2"
-          dark
-        >
-
-          <!-- <v-list-item 
-            link
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-account-outline</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Мой профиль</v-list-item-title>
-          </v-list-item> -->
-
-          <v-list-item 
-            link
-            to="/lockscreen"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-lock-outline</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Заблокировать</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item 
-            link
-            @click="logout"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-logout</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Выйти</v-list-item-title>
-          </v-list-item>
-
-        </v-list>
-      </v-menu>
+        <v-icon>mdi-cog-outline</v-icon>
+      </v-btn>
     </v-app-bar>
+
+    <v-navigation-drawer
+      v-model="settingsDrawer"
+      app
+      absolute
+      temporary
+      color="rgb(6,8,24)"
+      width="300px"
+      right
+    >
+      <Settings />
+    </v-navigation-drawer>
 
     <v-content>
       <v-container
@@ -163,11 +153,13 @@ html {
 </style>
 
 <script>
+import Settings from '@/components/Settings'
 import Home from '@/views/Home'
 import BondsService from '../BondsService'
   export default {
     data: () => ({
       drawer: true,
+      settingsDrawer: false,
       timerDisplay: false,      
       currentTime: 59,
       timer: null
@@ -224,7 +216,8 @@ import BondsService from '../BondsService'
       }
     },
     components: {
-      'child-component': Home
+      'child-component': Home,
+      Settings
     }
   }
 </script>

@@ -368,7 +368,14 @@ export default {
     snackbarstatus: '',
     snackbarText: '',
     groups: [],
-    bonds: [],
+    bonds: [
+      {id: 1, name: 'asdas', profit: 0.8, duration: 0.5},
+      {id: 2, name: 'aasd', profit: 0.23, duration: 0.48},
+      {id: 3, name: 'asdasd', profit: 0.58, duration: 0.4},
+      {id: 4, name: 'sdda', profit: 0.49, duration: 0.3},
+      {id: 5, name: 'asdzxczxas', profit: 0.38, duration: 0.2},
+      {id: 6, name: 'asdcxzcas', profit: 0.15, duration: 1},
+    ],
     filterIsin: '',
     filterName: '',
     typeItems: [
@@ -603,6 +610,7 @@ export default {
     async showGroup(group) {
       const groupItems = await this.$store.dispatch('fetchGroupData', group)
       this.items = groupItems.bonds
+      this.getScatters()
     },
     resetZoom() {
       this.chart.zoomOut()
@@ -631,7 +639,9 @@ export default {
           y: bond.profit
         })
       })
-
+      setTimeout(() => {
+        this.chart.series[0].setData(this.scatters)
+      }, 0)
     },
     getOFZ() { 
       this.ofz = []
@@ -714,6 +724,7 @@ export default {
       }, 0)
     },
     resetFilters() {
+      this.typeValue = this.typeItems
       this.items = this.bonds
     }
   },
