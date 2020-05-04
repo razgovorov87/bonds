@@ -70,6 +70,7 @@ export default {
     },
     async mounted() {
         const uid = this.$store.dispatch('getUid')
+        this.$store.dispatch('logout')
         
 
         if (!uid) {

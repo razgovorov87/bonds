@@ -170,106 +170,6 @@
 
                     </v-col>
 
-
-                    <!-- <v-col>
-
-                      <v-card
-                        elevation="0"
-                        class="d-flex justify-center flex-column"
-                      >
-                            <span v-if="!groups" class="mb-3 text-center">Вы не создавали ни одной группы</span>
-                            <v-list v-else class="mb-3">
-                              <v-list-item v-for="group in groups" :key="group.name">
-                                <v-list-item-title>
-                                  <v-list-item-avatar>
-                                    <v-icon class="grey lighten-1 white--text">mdi-folder</v-icon>
-                                  </v-list-item-avatar>
-                                  <span class="font-weight-bold">{{group.name}}</span>
-                                  </v-list-item-title>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                  color="success"
-                                  class="font-weight-bold mr-1"
-                                  @click="showGroup(group)"
-                                >
-                                  Показать
-                                </v-btn>
-                                <v-btn
-                                  color="red"
-                                  @click="deleteGroup(group)"
-                                >
-                                  <v-icon
-                                    color="white"
-                                  >
-                                    mdi-close
-                                  </v-icon>
-                                </v-btn>
-                              </v-list-item>
-                              <v-divider></v-divider>
-                            </v-list>
-
-                          <v-dialog v-model="dialogAddUserGroup" persistent max-width="600px">
-                            <template v-slot:activator="{ on }">
-                              <div class="d-flex justify-center">
-                                <v-btn color="primary" dark v-on="on">Создать новую группу</v-btn>
-                              </div>
-                            </template>
-                            <v-card>
-                              <v-card-title>
-                                <span class="headline">Создание группы</span>
-                              </v-card-title>
-                              <v-card-text>
-                                <v-container>
-                                  <v-row>
-                                    <v-col cols="12" sm="12" md="12">
-                                      <v-text-field 
-                                      label="Название группы" 
-                                      v-model="userGroupName" 
-                                      required 
-                                      :rules="userGroupNameRules"
-                                      ></v-text-field>
-                                    </v-col>
-                                  </v-row>
-                                </v-container>
-                              </v-card-text>
-                              <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="blue darken-1" text @click="dialogAddUserGroup = false">Закрыть</v-btn>
-                                <v-btn color="primary" @click="showSnackbar()">Создать</v-btn>
-                              </v-card-actions>
-                            </v-card>
-                          </v-dialog>
-
-                      </v-card>
-
-                      <v-snackbar
-                        v-model="userGroupSnackbar"
-                        :timeout="snackbarTimeout"
-                        bottom
-                        right
-                      >
-                      Выбрано облигаций: {{countSelectBonds}}
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        color="info"
-                        @click="addUserGroup()"
-                      >
-                        Добавить
-                      </v-btn>
-                      <v-btn
-                        text
-                        color="red"
-                        class="font-weight-bold"
-                        @click="userGroupSnackbar = false"
-                      >
-                        Отмена
-                      </v-btn>
-                      </v-snackbar>
-
-                    </v-col> -->
-
-
-
                   </v-row>
 
                 </v-card>
@@ -319,6 +219,30 @@
       color="red"
       class="font-weight-bold"
       @click="baseLineSnackbar = false"
+    >
+      Отмена
+    </v-btn>
+    </v-snackbar>
+
+    <v-snackbar
+      v-model="userGroupSnackbar"
+      :timeout="snackbarTimeout"
+      bottom
+      right
+    >
+    Выбрано облигаций: {{countSelectBonds}}
+    <v-spacer></v-spacer>
+    <v-btn
+      color="info"
+      @click="addUserGroup()"
+    >
+      Добавить
+    </v-btn>
+    <v-btn
+      text
+      color="red"
+      class="font-weight-bold"
+      @click="userGroupSnackbar = false"
     >
       Отмена
     </v-btn>
@@ -377,19 +301,30 @@ exportingInit(Highcharts);
 export default {
   name: 'Home',
   data: () => ({
+    colors: [
+      '#FF5252',
+      '#E040FB',
+      '#673AB7',
+      '#3F51B5',
+      '#009688',
+      '#CDDC39',
+      '#004D40',
+      '#FF9800',
+      '#795548',
+      '#607D8B',
+      '#000000',
+      '#E91E63'
+    ],
     settingsDrawer: false,
     dialogAddUserGroup: false,
     userGroupName: '',
-    userGroupNameRules: [
-      v => !!v || 'Введите название',
-    ],
     baseLineSnackbar: false,
+    userGroupSnackbar: false,
     baseLineName: '',
     snackbarTimeout: 0,
     snackbar: false,
     snackbarstatus: '',
     snackbarText: '',
-    groups: [],
     bonds: [],
     filterIsin: '',
     filterName: '',
@@ -402,36 +337,33 @@ export default {
           'Облигация МФО',
           'Облигация центрального банка',
           'Региональная облигация',
-        ],
-        typeValue: [],
-        selected: [],
-        headers: [           
-            {text: 'Название', value: 'name', align: 'center', sortable: false},
-            {text: 'ISIN',  value: 'isin', sortable: false},
-            {text: 'Доходность', value: 'profit'},
-            {text: 'Дюрация', value: 'duration'},
-            {text: 'Цена послед.', value: 'last_price'},
-            {text: 'Лучший спрос', value: 'best_spros'},
-            {text: 'Лучшее предл.', value: 'best_predl'},
-            {text: 'Оборот', value: 'oborot'},
-            {text: 'Тип', value: 'type'}
-        ],
+    ],
+    typeValue: [],
+    selected: [],
+    headers: [           
+        {text: 'Название', value: 'name', align: 'center', sortable: false},
+        {text: 'ISIN',  value: 'isin', sortable: false},
+        {text: 'Доходность', value: 'profit'},
+        {text: 'Дюрация', value: 'duration'},
+        {text: 'Цена послед.', value: 'last_price'},
+        {text: 'Лучший спрос', value: 'best_spros'},
+        {text: 'Лучшее предл.', value: 'best_predl'},
+        {text: 'Оборот', value: 'oborot'},
+        {text: 'Тип', value: 'type'},
+        {text: 'Эмитент', value: 'emitent.shortName'},
+        {text: 'Сектор', value: 'emitent.sector'}
+    ],
     loading: true,
     scatters: [],
-    ofz: [],
     items: [],
     error: '',
     chart: [],
     selectPoint: [],
     chartOptions: {},
   }),
-  validations: {
-    userGroupName: {required}
-  },
   async created() {
     try {
       this.typeValue = this.typeItems
-      this.groups = await this.$store.dispatch('fetchUserGroup')
       this.bonds = await BondsService.getBonds()
       this.items = this.bonds
       this.getScatters()
@@ -585,6 +517,11 @@ export default {
       this.settingsDrawer = false
       this.baseLineSnackbar = true
     },
+    createUserGroup(item) {
+      this.userGroupName = item
+      this.settingsDrawer = false
+      this.userGroupSnackbar = true
+    },
     async addBaseLine() {
       if(!this.selected.length || this.selected.length == 1) {
         this.snackbar = true
@@ -603,7 +540,7 @@ export default {
 
       this.snackbar = true
       this.snackbarstatus = 'success'
-      this.snackbarText = 'Базовая линия успешно создана'
+      this.snackbarText = 'Базовая группа успешно создана'
 
       this.$refs.settings.fetchBaseLine()
 
@@ -611,10 +548,10 @@ export default {
       this.baseLineName = ''
     },
     async addUserGroup() {
-      if(!this.selected.length) {
+      if(!this.selected.length || this.selected.length == 1) {
         this.snackbar = true
         this.snackbarstatus = 'error'
-        this.snackbarText = 'В группу не добавлено ни одной облигации'
+        this.snackbarText = 'Неверное кол-во элементов'
         return
       }
       this.userGroupSnackbar = false
@@ -622,16 +559,17 @@ export default {
         name: this.userGroupName,
         bonds: this.selected
       }
+
       await this.$store.dispatch('createUserGroup', groupData)
 
       this.snackbar = true
       this.snackbarstatus = 'success'
       this.snackbarText = 'Группа успешно создана'
 
-      this.groups = await this.$store.dispatch('fetchUserGroup')
-      this.selected = []
-      this.userGroupName = ''
+      this.$refs.settings.fetchUserGroup()
 
+      this.selected = []
+      this.baseLineName = ''
     },
     async deleteGroup(group) {
       await this.$store.dispatch('deleteUserGroup', group)
@@ -677,9 +615,9 @@ export default {
         this.chart.series[0].setData(this.scatters)
       }, 0)
     },
-    getLine(line) {
+    getLine(item) {
       const sortedData = []
-      line.bonds.filter(bond => {
+      item.bonds.filter(bond => {
         sortedData.push({
           id: bond.isin,
           name: bond.name,
@@ -762,31 +700,44 @@ export default {
       this.items = this.bonds
     },
     chartsCreateLine(line) {
+      const colors = this.colors
       const seriesData = this.getLine(line)
       const series = {
           name: line.name,
-          color: '#FF8A80',
+          color: this.colors[Math.floor(Math.random() * colors.length)],
           lineWidth: 3,
           marker: {
-            lineColor: '#FF8A80',
+            lineColor: this.colors[Math.floor(Math.random() * colors.length)],
             radius: 6
           },
           stickyTracking: false,
           data: seriesData
         }
       this.chart.addSeries(series)
-
-      this.snackbar = true
-      this.snackbarstatus = 'success'
-      this.snackbarText = 'Линия ' + line.name + ' построена'
     },
     chartsDeleteLine(line) {
       const seriesIndex = this.chart.series.findIndex(item => item.name == line.name)
       this.chart.series[seriesIndex].remove()
+    },
+    async trashBaseLine(line) {
+
+      await this.$store.dispatch('trashBaseLine', line)
+
+      await this.$refs.settings.fetchBaseLine()
 
       this.snackbar = true
       this.snackbarstatus = 'success'
-      this.snackbarText = 'Линия ' + line.name + ' удалена'
+      this.snackbarText = 'Группа «' + line.name + '» успешно удалена'
+    },
+    async trashUserGroup(group) {
+
+      await this.$store.dispatch('trashUserGroup', group)
+
+      await this.$refs.settings.fetchUserGroup()
+
+      this.snackbar = true
+      this.snackbarstatus = 'success'
+      this.snackbarText = 'Группа «' + group.name + '» успешно удалена'
     }
   },
   computed: {

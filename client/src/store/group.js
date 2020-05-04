@@ -25,7 +25,14 @@ export default {
                 return groupData
             } catch (e) {throw e}
         },
-        async deleteUserGroup({dispatch}, group) {
+        async fetchUserGroupDublicate({dispatch}, groupName) {
+            try {
+                const uid = await dispatch('getUid')
+                const group = (await firebase.database().ref(`/users/${uid}/groups/${groupName}`).once('value')).val()
+                return group
+            } catch (e) {throw e}
+        },
+        async trashUserGroup({dispatch}, group) {
             try {
                 const uid = await dispatch('getUid')
                 await firebase.database().ref(`/users/${uid}/groups/${group.name}`).remove()
@@ -43,6 +50,17 @@ export default {
             try {
                 const baseLines = (await firebase.database().ref(`/baseline/`).once('value')).val()
                 return baseLines
+            } catch (e) {throw e}
+        },
+        async fetchBaseLineDublicate({dispatch}, lineName) {
+            try {
+                const line = (await firebase.database().ref(`/baseline/${lineName}`).once('value')).val()
+                return line
+            } catch (e) {throw e}
+        },
+        async trashBaseLine({dispatch}, line) {
+            try {
+                await firebase.database().ref(`/baseline/${line.name}`).remove()
             } catch (e) {throw e}
         },
     }
