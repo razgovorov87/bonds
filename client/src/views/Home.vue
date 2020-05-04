@@ -1,6 +1,17 @@
 <template>
   <v-row>
 
+    <v-navigation-drawer
+      v-model="settingsDrawer"
+      app
+      temporary
+      color="rgb(6,8,24)"
+      width="350px"
+      right
+      >
+      <Settings ref="settings" />
+    </v-navigation-drawer>
+
     <v-col
       cols="12"
       style="padding-top: 0;"
@@ -34,16 +45,10 @@
               <v-expansion-panel-header>
                 <v-row no-gutters>
                   <v-col
-                    cols="6"
+                    cols="12"
                     class="text-center"
                   >
                     <v-chip class="gray--text text-uppercase caption ma-0">Фильтры</v-chip>
-                  </v-col>
-                  <v-col
-                    cols="6"
-                    class="text-center"
-                  >
-                    <v-chip class="gray--text text-uppercase caption ma-0">Мои группы</v-chip>
                   </v-col>
                 </v-row>
               </v-expansion-panel-header>
@@ -139,8 +144,15 @@
 
                           
                             <v-col
-                              cols="2"
+                              cols="3"
                             >
+                              <v-btn
+                                class="mr-2"
+                                color="error"
+                                @click="resetFilters()"
+                              >
+                                Сбросить фильтры
+                              </v-btn>
                               <v-btn
                                 color="primary"
                                 type="submit"
@@ -159,7 +171,7 @@
                     </v-col>
 
 
-                    <v-col>
+                    <!-- <v-col>
 
                       <v-card
                         elevation="0"
@@ -254,23 +266,10 @@
                       </v-btn>
                       </v-snackbar>
 
-                    </v-col>
+                    </v-col> -->
 
 
 
-                  </v-row>
-                  <v-row
-                    justify="center"
-                    class="mt-3"
-                  >
-                    <v-col cols="4" align="center">
-                      <v-btn
-                        color="error"
-                        @click="resetFilters()"
-                      >
-                        Сбросить фильтры
-                      </v-btn>
-                    </v-col>
                   </v-row>
 
                 </v-card>
@@ -300,6 +299,30 @@
       </v-card>
     </div>
     </v-col>
+
+    <v-snackbar
+      v-model="baseLineSnackbar"
+      :timeout="snackbarTimeout"
+      bottom
+      right
+    >
+    Выбрано облигаций: {{countSelectBonds}}
+    <v-spacer></v-spacer>
+    <v-btn
+      color="info"
+      @click="addBaseLine()"
+    >
+      Добавить
+    </v-btn>
+    <v-btn
+      text
+      color="red"
+      class="font-weight-bold"
+      @click="baseLineSnackbar = false"
+    >
+      Отмена
+    </v-btn>
+    </v-snackbar>
 
     <v-snackbar
         v-model="snackbar"
@@ -336,12 +359,9 @@
   </v-row>    
 </template>
 
-<style>
-
-</style>
-
 <script>
 import BondsService from '../BondsService'
+import Settings from '@/components/Settings'
 import {Chart} from 'highcharts-vue'
 import Highcharts from "highcharts";
 import exportingInit from "highcharts/modules/exporting";
@@ -357,25 +377,20 @@ exportingInit(Highcharts);
 export default {
   name: 'Home',
   data: () => ({
+    settingsDrawer: false,
     dialogAddUserGroup: false,
     userGroupName: '',
     userGroupNameRules: [
       v => !!v || 'Введите название',
     ],
-    userGroupSnackbar: false,
+    baseLineSnackbar: false,
+    baseLineName: '',
     snackbarTimeout: 0,
     snackbar: false,
     snackbarstatus: '',
     snackbarText: '',
     groups: [],
-    bonds: [
-      {id: 1, name: 'asdas', profit: 0.8, duration: 0.5},
-      {id: 2, name: 'aasd', profit: 0.23, duration: 0.48},
-      {id: 3, name: 'asdasd', profit: 0.58, duration: 0.4},
-      {id: 4, name: 'sdda', profit: 0.49, duration: 0.3},
-      {id: 5, name: 'asdzxczxas', profit: 0.38, duration: 0.2},
-      {id: 6, name: 'asdcxzcas', profit: 0.15, duration: 1},
-    ],
+    bonds: [],
     filterIsin: '',
     filterName: '',
     typeItems: [
@@ -417,10 +432,9 @@ export default {
     try {
       this.typeValue = this.typeItems
       this.groups = await this.$store.dispatch('fetchUserGroup')
-      this.bonds = await BondsService.getBonds();
+      this.bonds = await BondsService.getBonds()
       this.items = this.bonds
       this.getScatters()
-      this.getOFZ()
       this.chartOptions = {
       chart: {
         height: 700,
@@ -512,16 +526,6 @@ export default {
       series: [
         {
         data: this.scatters
-        },
-        {
-          color: '#FF8A80',
-          lineWidth: 3,
-          marker: {
-            lineColor: '#FF8A80',
-            radius: 6
-          },
-          stickyTracking: false,
-          data: this.ofz
         }
       ]
     }
@@ -574,7 +578,37 @@ export default {
           return
       }
       this.dialogAddUserGroup = false
-      this.userGroupSnackbar = true
+      this.baseLineSnackbar = true
+    },
+    createBaseLine(item) {
+      this.baseLineName = item
+      this.settingsDrawer = false
+      this.baseLineSnackbar = true
+    },
+    async addBaseLine() {
+      if(!this.selected.length || this.selected.length == 1) {
+        this.snackbar = true
+        this.snackbarstatus = 'error'
+        this.snackbarText = 'Неверное кол-во элементов'
+        return
+      }
+      
+      this.baseLineSnackbar = false
+      const groupData = {
+        name: this.baseLineName,
+        bonds: this.selected
+      }
+
+      await this.$store.dispatch('createBaseLine', groupData)
+
+      this.snackbar = true
+      this.snackbarstatus = 'success'
+      this.snackbarText = 'Базовая линия успешно создана'
+
+      this.$refs.settings.fetchBaseLine()
+
+      this.selected = []
+      this.baseLineName = ''
     },
     async addUserGroup() {
       if(!this.selected.length) {
@@ -643,28 +677,28 @@ export default {
         this.chart.series[0].setData(this.scatters)
       }, 0)
     },
-    getOFZ() { 
-      this.ofz = []
-      this.items.filter(bond => {
-        if( bond.type == 'Облигационный федеральный займ' ) {
-          this.ofz.push({
-            id: bond.isin,
-            name: bond.name,
-            last_price: bond.last_price,
-            best_spros: bond.best_spros,
-            best_predl: bond.best_predl,
-            oborot: bond.oborot,
-            x: bond.duration,
-            y: bond.profit
-          })
-        }
+    getLine(line) {
+      const sortedData = []
+      line.bonds.filter(bond => {
+        sortedData.push({
+          id: bond.isin,
+          name: bond.name,
+          last_price: bond.last_price,
+          best_spros: bond.best_spros,
+          best_predl: bond.best_predl,
+          oborot: bond.oborot,
+          x: bond.duration,
+          y: bond.profit
+        })
       })
       
       function byField(field) {
         return (a, b) => a[field] > b[field] ? 1 : -1
       }
 
-      this.ofz.sort(byField('x'))
+      sortedData.sort(byField('x'))
+
+      return sortedData
 
     },
     async filterData() {
@@ -726,10 +760,37 @@ export default {
     resetFilters() {
       this.typeValue = this.typeItems
       this.items = this.bonds
+    },
+    chartsCreateLine(line) {
+      const seriesData = this.getLine(line)
+      const series = {
+          name: line.name,
+          color: '#FF8A80',
+          lineWidth: 3,
+          marker: {
+            lineColor: '#FF8A80',
+            radius: 6
+          },
+          stickyTracking: false,
+          data: seriesData
+        }
+      this.chart.addSeries(series)
+
+      this.snackbar = true
+      this.snackbarstatus = 'success'
+      this.snackbarText = 'Линия ' + line.name + ' построена'
+    },
+    chartsDeleteLine(line) {
+      const seriesIndex = this.chart.series.findIndex(item => item.name == line.name)
+      this.chart.series[seriesIndex].remove()
+
+      this.snackbar = true
+      this.snackbarstatus = 'success'
+      this.snackbarText = 'Линия ' + line.name + ' удалена'
     }
   },
   computed: {
-    likesAllItems () {
+      likesAllItems () {
         return this.typeValue.length === this.typeItems.length
       },
       likesSomeItems () {
@@ -748,7 +809,8 @@ export default {
       }
   },
   components: {
-    highcharts: Chart
+    highcharts: Chart,
+    Settings
   }
 }
 </script>

@@ -15,6 +15,7 @@ export default {
                 const uid = await dispatch('getUid')
                 await firebase.database().ref(`/users/${uid}/info`).set({
                     avatar: '',
+                    isAdmin: 0,
                     name,
                     email
                 })

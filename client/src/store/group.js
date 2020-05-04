@@ -30,6 +30,20 @@ export default {
                 const uid = await dispatch('getUid')
                 await firebase.database().ref(`/users/${uid}/groups/${group.name}`).remove()
             } catch (e) {throw e}
-        }
+        },
+        async createBaseLine({dispatch}, {name, bonds}) {
+            try {
+                await firebase.database().ref(`/baseline/${name}`).set({
+                    name,
+                    bonds
+                })
+            } catch (e) {throw e}
+        },
+        async fetchBaseLine({dispatch}) {
+            try {
+                const baseLines = (await firebase.database().ref(`/baseline/`).once('value')).val()
+                return baseLines
+            } catch (e) {throw e}
+        },
     }
 }

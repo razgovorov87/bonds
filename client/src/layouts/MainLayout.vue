@@ -112,24 +112,12 @@
       </v-btn>
 
       <v-btn
-        icon
-        @click.stop="settingsDrawer = !settingsDrawer"
+        @click.stop="settingsDrawerShow()"
       >
-        <v-icon>mdi-cog-outline</v-icon>
+        <v-icon class="mr-2">mdi-cog-outline</v-icon>
+        Построения
       </v-btn>
     </v-app-bar>
-
-    <v-navigation-drawer
-      v-model="settingsDrawer"
-      app
-      absolute
-      temporary
-      color="rgb(6,8,24)"
-      width="300px"
-      right
-    >
-      <Settings />
-    </v-navigation-drawer>
 
     <v-content>
       <v-container
@@ -153,13 +141,11 @@ html {
 </style>
 
 <script>
-import Settings from '@/components/Settings'
 import Home from '@/views/Home'
 import BondsService from '../BondsService'
   export default {
     data: () => ({
       drawer: true,
-      settingsDrawer: false,
       timerDisplay: false,      
       currentTime: 59,
       timer: null
@@ -178,6 +164,9 @@ import BondsService from '../BondsService'
       }
     },
     methods: {
+      settingsDrawerShow() {
+        this.$refs.childComponent.settingsDrawer = !this.$refs.childComponent.settingsDrawer
+      },
       startButtonTimer() {
         this.currentTime = 59
         this.timer = setInterval(() => {
@@ -216,8 +205,7 @@ import BondsService from '../BondsService'
       }
     },
     components: {
-      'child-component': Home,
-      Settings
+      'child-component': Home
     }
   }
 </script>
