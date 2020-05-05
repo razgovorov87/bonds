@@ -62,143 +62,236 @@
 
                     <v-col>
 
-                        <v-form 
-                          @submit.prevent="filterData()" 
-                          style="min-width: 100%"
-                        >
-                          <v-row
-                            align="center"
-                            justify="space-between"
-                          >
+                        <v-form @submit.prevent="filterData()" style="min-width: 100%">
 
-                            <v-row
-                              justify="center"
-                            >
+                          <v-row align="center" justify="space-between">
 
-                            <v-col
-                              cols="4"
-                            >
-                              <v-text-field
-                                v-model="filterName"
-                                label="Название"
-                                outlined
-                              >
-                                asdasd
-                              </v-text-field>
-                            </v-col>
+                            <v-row justify="center">
 
-
-                            <v-col
-                              cols="4"
-                            >
-                              <v-text-field
-                                v-model="filterIsin"
-                                label="ISIN"
-                                outlined
+                              <v-col cols="2">
+                                <v-text-field
+                                  v-model="filterName"
+                                  label="Название"
+                                  outlined
                                 >
-                                asdasd
-                              </v-text-field>
-                            </v-col>
+                                  asdasd
+                                </v-text-field>
+                              </v-col>
+
+
+                              <v-col cols="2">
+                                <v-text-field
+                                  v-model="filterIsin"
+                                  label="ISIN"
+                                  outlined
+                                  >
+                                  asdasd
+                                </v-text-field>
+                              </v-col>
+
+                              <v-col cols="4" align="stretch">
+                                <v-select
+                                  v-model="typeValue"
+                                  :items="typeItems"
+                                  label="Тип"
+                                  multiple
+                                  outlined
+                                  small-chips
+                                  class="mr-3 subtitle-2"
+                                  autowidth="false"
+                                >
+
+                                  <template v-slot:prepend-item>
+                                    <v-list-item
+                                      ripple
+                                      @click="toggle"
+                                    >
+                                      <v-list-item-action>
+                                        <v-icon :color="typeValue.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
+                                      </v-list-item-action>
+                                      <v-list-item-content>
+                                        <v-list-item-title>Выбрать все</v-list-item-title>
+                                      </v-list-item-content>
+                                    </v-list-item>
+                                    <v-divider class="mt-2"></v-divider>
+                                  </template>
+
+                                  <template v-slot:selection="{ item, index }">
+                                    <v-chip v-if="index === 0 || index === 1">
+                                      <span>{{ item }}</span>
+                                    </v-chip>
+                                    <span
+                                      v-if="index === 2"
+                                      class="grey--text caption"
+                                    >(+{{ typeValue.length - 2 }} других)</span>
+                                  </template>
+
+
+
+                                </v-select>
+                              </v-col>
+
+                              <v-col cols="2">
+                                <v-combobox
+                                  v-model="emitentValue"
+                                  :items="emitentItems"
+                                  label="Эмитент"
+                                  outlined
+                                  class="mr-3 subtitle-2"
+                                  autowidth="false"
+                                >
+                                </v-combobox>
+                              </v-col>
+
+                              <v-col cols="2">
+                                <v-combobox
+                                  v-model="sectorValue"
+                                  :items="sectorItems"
+                                  label="Сектор"
+                                  outlined
+                                  class="mr-3 subtitle-2"
+                                  autowidth="false"
+                                >
+                                </v-combobox>
+                              </v-col>
+                              
+                            </v-row>
+
+                              <v-col cols="4">
+                                <p class="text-center subtitle-2">Доходность</p>
+                                <v-range-slider
+                                  v-model="profitRange"
+                                  :max="profitRangeMax"
+                                  :min="profitRangeMin"
+                                  hide-details
+                                  class="align-center"
+                                  >
+                                    <template v-slot:prepend>
+                                      <v-text-field
+                                        :value="profitRange[0]"
+                                        class="mt-0 pt-0"
+                                        hide-details
+                                        dense
+                                        outlined
+                                        type="number"
+                                        style="width: 60px"
+                                        @change="$set(profitRange, 0, $event)"
+                                      ></v-text-field>
+                                    </template>
+                                    <template v-slot:append>
+                                      <v-text-field
+                                        :value="profitRange[1]"
+                                        class="mt-0 pt-0"
+                                        hide-details
+                                        dense
+                                        outlined
+                                        type="number"
+                                        style="width: 60px"
+                                        @change="$set(profitRange, 1, $event)"
+                                      ></v-text-field>
+                                    </template>
+                                  </v-range-slider>
+                              </v-col>
+
+                              <v-col cols="4">
+                                <p class="text-center subtitle-2">Дюрация</p>
+                                <v-range-slider
+                                  v-model="durationRange"
+                                  :max="durationRangeMax"
+                                  :min="durationRangeMin"
+                                  hide-details
+                                  class="align-center"
+                                  >
+                                    <template v-slot:prepend>
+                                      <v-text-field
+                                        :value="durationRange[0]"
+                                        class="mt-0 pt-0"
+                                        hide-details
+                                        outlined
+                                        dense
+                                        type="number"
+                                        style="width: 60px"
+                                        @change="$set(durationRange, 0, $event)"
+                                      ></v-text-field>
+                                    </template>
+                                    <template v-slot:append>
+                                      <v-text-field
+                                        :value="durationRange[1]"
+                                        class="mt-0 pt-0"
+                                        hide-details
+                                        outlined
+                                        dense
+                                        type="number"
+                                        style="width: 60px"
+                                        @change="$set(profitRange, 1, $event)"
+                                      ></v-text-field>
+                                    </template>
+                                  </v-range-slider>
+                              </v-col>
+
+                              <v-col cols="4">
+                                <p class="text-center subtitle-2">Оборот</p>
+                                <v-range-slider
+                                  v-model="oborotRange"
+                                  :max="oborotRangeMax"
+                                  :min="oborotRangeMin"
+                                  hide-details
+                                  class="align-center"
+                                  >
+                                    <template v-slot:prepend>
+                                      <v-text-field
+                                        :value="oborotRange[0]"
+                                        class="mt-0 pt-0"
+                                        hide-details
+                                        outlined
+                                        dense
+                                        type="number"
+                                        style="width: 60px"
+                                        @change="$set(oborotRange, 0, $event)"
+                                      ></v-text-field>
+                                    </template>
+                                    <template v-slot:append>
+                                      <v-text-field
+                                        :value="oborotRange[1]"
+                                        class="mt-0 pt-0"
+                                        hide-details
+                                        outlined
+                                        dense
+                                        type="number"
+                                        style="width: 60px"
+                                        @change="$set(oborotRange, 1, $event)"
+                                      ></v-text-field>
+                                    </template>
+                                  </v-range-slider>
+                              </v-col>
+
+
+                            <v-row justify="end">
+
+                            
+                              <v-col
+                                cols="3"
+                              >
+                                <v-btn
+                                  class="mr-2"
+                                  color="error"
+                                  @click="resetFilters()"
+                                >
+                                  Сбросить фильтры
+                                </v-btn>
+                                <v-btn
+                                  color="primary"
+                                  type="submit"
+                                >
+                                  Фильтр
+                                </v-btn>
+
+                              </v-col>
+
 
                             </v-row>
 
-                            <v-row>
-
-                            <v-col
-                              cols="4"
-                            >
-                              <v-select
-                                v-model="typeValue"
-                                :items="typeItems"
-                                label="Тип"
-                                multiple
-                                outlined
-                                small-chips
-                                deletable-chips
-                                class="mr-3 subtitle-2"
-                                autowidth="false"
-                              >
-
-                                <template v-slot:prepend-item>
-                                  <v-list-item
-                                    ripple
-                                    @click="toggle"
-                                  >
-                                    <v-list-item-action>
-                                      <v-icon :color="typeValue.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
-                                    </v-list-item-action>
-                                    <v-list-item-content>
-                                      <v-list-item-title>Выбрать все</v-list-item-title>
-                                    </v-list-item-content>
-                                  </v-list-item>
-                                  <v-divider class="mt-2"></v-divider>
-                                </template>
-
-
-
-                              </v-select>
-                            </v-col>
-
-                            <v-col
-                              cols="4"
-                            >
-                              <v-combobox
-                                v-model="emitentValue"
-                                :items="emitentItems"
-                                label="Эмитент"
-                                outlined
-                                class="mr-3 subtitle-2"
-                                autowidth="false"
-                              >
-                              </v-combobox>
-                            </v-col>
-
-                            <v-col
-                              cols="4"
-                            >
-                              <v-combobox
-                                v-model="sectorValue"
-                                :items="sectorItems"
-                                label="Сектор"
-                                outlined
-                                class="mr-3 subtitle-2"
-                                autowidth="false"
-                              >
-                              </v-combobox>
-                            </v-col>
-
-                          </v-row>
-
-                          <v-row
-                            justify="end"
-                          >
-
-                          
-                            <v-col
-                              cols="3"
-                            >
-                              <v-btn
-                                class="mr-2"
-                                color="error"
-                                @click="resetFilters()"
-                              >
-                                Сбросить фильтры
-                              </v-btn>
-                              <v-btn
-                                color="primary"
-                                type="submit"
-                              >
-                                Фильтр
-                              </v-btn>
-
-                            </v-col>
-
-
-                          </v-row>
-
-                        </v-row>
-
-                        
+                          </v-row> 
                         </v-form>
 
                     </v-col>
@@ -351,6 +444,15 @@ export default {
     settingsDrawer: false,
     dialogAddUserGroup: false,
     userGroupName: '',
+    profitRange: [4, 7],
+    profitRangeMin: -5,
+    profitRangeMax: 20,
+    durationRange: [0, 5],
+    durationRangeMin: 0,
+    durationRangeMax: 5,
+    oborotRange: [0, 50],
+    oborotRangeMin: 0,
+    oborotRangeMax: 100,
     baseLineSnackbar: false,
     userGroupSnackbar: false,
     baseLineName: '',
@@ -358,16 +460,15 @@ export default {
     snackbar: false,
     snackbarstatus: '',
     snackbarText: '',
-    bonds: [],
-    
-      // {id: 1, isin: '789456123', name: 'Asd123', profit: 0.2, duration: 0.5},
-      // {id: 2, isin: '123456', name: 'Asd123', profit: 0.3, duration: 0.3},
-      // {id: 3, isin: '123', name: 'Asd123', profit: 0.74, duration: 0.4},
-      // {id: 4, isin: '456', name: 'Asd123', profit: 0.35, duration: 0.54},
-      // {id: 5, isin: '789', name: 'Asd123', profit: 0.23, duration: 0.3},
-      // {id: 6, isin: '456123', name: 'Asd123', profit: 0.49, duration: 0.2},
-      // {id: 7, isin: '71432', name: 'Asd123', profit: 0.85, duration: 0.1},
-    
+    bonds: [
+      {id: 1, isin: '789456123', name: 'Asd123', profit: 0.2, duration: 0.5},
+      {id: 2, isin: '123456', name: 'Asd123', profit: 0.3, duration: 0.3},
+      {id: 3, isin: '123', name: 'Asd123', profit: 0.74, duration: 0.4},
+      {id: 4, isin: '456', name: 'Asd123', profit: 0.35, duration: 0.54},
+      {id: 5, isin: '789', name: 'Asd123', profit: 0.23, duration: 0.3},
+      {id: 6, isin: '456123', name: 'Asd123', profit: 0.49, duration: 0.2},
+      {id: 7, isin: '71432', name: 'Asd123', profit: 0.85, duration: 0.1},
+    ],
     filterIsin: '',
     filterName: '',
     typeItems: [
@@ -410,9 +511,11 @@ export default {
   async created() {
     try {
       this.typeValue = this.typeItems
+      this.emitentValue = ''
+      this.sectorValue = ''
       this.bonds = await BondsService.getBonds()
       this.items = this.bonds
-      this.getScatters()
+      this.filterData()
       this.getEmitentItems()
       this.getSectorItems()
       this.chartOptions = {
@@ -719,7 +822,6 @@ export default {
       })
 
       let finalArr = filtered
-
       if(this.filterIsin) {
         const isin = this.filterIsin.toUpperCase()
         finalArr = finalArr.filter(item => {
@@ -753,21 +855,40 @@ export default {
           }
         })
       }
+
+      finalArr = finalArr.filter(item => {
+        if(this.profitRange[0] <= item.profit && this.profitRange[1] >= item.profit) {
+          return item
+        }
+      })
+      
+      finalArr = finalArr.filter(item => {
+        if(this.durationRange[0] <= item.duration && this.durationRange[1] >= item.duration) {
+          return item
+        }
+      })
+
+      // finalArr = finalArr.filter(item => {
+      //   if(this.oborotRange[0] <= item.oborot && this.oborotRange[1] >= item.oborot) {
+      //     return item
+      //   }
+      // })
+
       this.items = finalArr
 
       this.getScatters()
-      this.getOFZ()
-      setTimeout(() => {
-        this.chart.series[0].setData(this.scatters)
-      }, 0)
     },
     resetFilters() {
       this.filterName = ''
       this.filterIsin = ''
       this.emitentValue = ''
       this.sectorValue = ''
+      this.profitRange = [4,7]
+      this.durationRange = [0,5]
+      this.oborotRange = [0,50]
       this.typeValue = this.typeItems
       this.items = this.bonds
+      this.filterData()
     },
     chartsCreateLine(line) {
       const colors = this.colors
