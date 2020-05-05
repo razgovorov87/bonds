@@ -748,7 +748,7 @@ export default {
       if(this.sectorValue) {
         const sector = this.sectorValue
         finalArr = finalArr.filter(item => {
-           if(item.emitent.shortName == emitent) {
+           if(item.emitent.sector == sector) {
             return item
           }
         })
