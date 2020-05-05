@@ -60,13 +60,13 @@
                   
                   <v-row>
 
-                    <v-col>
+                    <v-col cols="12">
 
                         <v-form @submit.prevent="filterData()" style="min-width: 100%">
 
                           <v-row align="center" justify="space-between">
 
-                            <v-row justify="center">
+                            <v-row justify="center" style="width: 100%">
 
                               <v-col cols="2">
                                 <v-text-field
@@ -158,7 +158,7 @@
                             </v-row>
 
                               <v-col cols="4">
-                                <p class="text-center subtitle-2">Доходность</p>
+                                <p class="text-center subtitle-2">Доходность, %</p>
                                 <v-range-slider
                                   v-model="profitRange"
                                   :max="profitRangeMax"
@@ -194,7 +194,7 @@
                               </v-col>
 
                               <v-col cols="4">
-                                <p class="text-center subtitle-2">Дюрация</p>
+                                <p class="text-center subtitle-2">Дюрация, лет</p>
                                 <v-range-slider
                                   v-model="durationRange"
                                   :max="durationRangeMax"
@@ -230,7 +230,7 @@
                               </v-col>
 
                               <v-col cols="4">
-                                <p class="text-center subtitle-2">Оборот</p>
+                                <p class="text-center subtitle-2">Оборот, тыс.руб</p>
                                 <v-range-slider
                                   v-model="oborotRange"
                                   :max="oborotRangeMax"
@@ -241,24 +241,24 @@
                                     <template v-slot:prepend>
                                       <v-text-field
                                         :value="oborotRange[0]"
+                                        suffix="тыс"
                                         class="mt-0 pt-0"
                                         hide-details
                                         outlined
                                         dense
-                                        type="number"
-                                        style="width: 60px"
+                                        style="width: 105px"
                                         @change="$set(oborotRange, 0, $event)"
                                       ></v-text-field>
                                     </template>
                                     <template v-slot:append>
                                       <v-text-field
                                         :value="oborotRange[1]"
+                                        suffix="тыс"
                                         class="mt-0 pt-0"
                                         hide-details
                                         outlined
                                         dense
-                                        type="number"
-                                        style="width: 60px"
+                                        style="width: 105px"
                                         @change="$set(oborotRange, 1, $event)"
                                       ></v-text-field>
                                     </template>
@@ -514,6 +514,11 @@ export default {
       this.emitentValue = ''
       this.sectorValue = ''
       this.bonds = await BondsService.getBonds()
+      setTimeout(() => {
+        this.getMaxValue()
+        this.getMinValue()
+        this.oborotRange = [this.oborotRangeMin, this.oborotRangeMax]
+      }, 0)
       this.items = this.bonds
       this.filterData()
       this.getEmitentItems()
@@ -868,11 +873,11 @@ export default {
         }
       })
 
-      // finalArr = finalArr.filter(item => {
-      //   if(this.oborotRange[0] <= item.oborot && this.oborotRange[1] >= item.oborot) {
-      //     return item
-      //   }
-      // })
+      finalArr = finalArr.filter(item => {
+        if((this.oborotRange[0] * 1000) <= item.oborot && (this.oborotRange[1] * 1000) >= item.oborot) {
+          return item
+        }
+      })
 
       this.items = finalArr
 
@@ -970,6 +975,48 @@ export default {
           )
         }
       }
+    },
+    getMaxValue() {
+      let profitMax = 0
+      let durationMax = 0
+      let oborotMax = 0
+
+      this.bonds.forEach(item => {
+        if(item.profit > profitMax) {
+          profitMax = item.profit
+        }
+        if(item.duration > durationMax) {
+          durationMax = item.duration
+        }
+        if(item.oborot > oborotMax) {
+          oborotMax = item.oborot
+        }
+      });
+      
+      this.profitRangeMax = Math.ceil(profitMax)
+      this.durationRangeMax = Math.ceil(durationMax)
+      this.oborotRangeMax = Math.ceil(oborotMax / 1000)
+    },
+    getMinValue() {
+      let profitMin = 0
+      let durationMin = 0
+      let oborotMin = 0
+
+      this.bonds.forEach(item => {
+        if(item.profit < profitMin) {
+          profitMin = item.profit
+        }
+        if(item.duration < durationMin) {
+          durationMin = item.duration
+        }
+        if(item.oborot < oborotMin) {
+          oborotMin = item.oborot
+        }
+      });
+      
+      this.profitRangeMin = Math.floor(profitMin)
+      this.durationRangeMin = Math.floor(durationMin)
+      this.oborotRangeMin = Math.floor(oborotMin / 1000)
     }
   },
   computed: {
