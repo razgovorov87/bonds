@@ -1,6 +1,7 @@
 <template>
   <v-row>
 
+    
     <v-navigation-drawer
       v-model="settingsDrawer"
       app
@@ -101,8 +102,10 @@
 
                             </v-row>
 
+                            <v-row>
+
                             <v-col
-                              cols="12"
+                              cols="4"
                             >
                               <v-select
                                 v-model="typeValue"
@@ -136,6 +139,34 @@
                               </v-select>
                             </v-col>
 
+                            <v-col
+                              cols="4"
+                            >
+                              <v-combobox
+                                v-model="emitentValue"
+                                :items="emitentItems"
+                                label="Эмитент"
+                                outlined
+                                class="mr-3 subtitle-2"
+                                autowidth="false"
+                              >
+                              </v-combobox>
+                            </v-col>
+
+                            <v-col
+                              cols="4"
+                            >
+                              <v-combobox
+                                v-model="sectorValue"
+                                :items="sectorItems"
+                                label="Сектор"
+                                outlined
+                                class="mr-3 subtitle-2"
+                                autowidth="false"
+                              >
+                              </v-combobox>
+                            </v-col>
+
                           </v-row>
 
                           <v-row
@@ -164,6 +195,8 @@
 
 
                           </v-row>
+
+                        </v-row>
 
                         
                         </v-form>
@@ -326,6 +359,15 @@ export default {
     snackbarstatus: '',
     snackbarText: '',
     bonds: [],
+    
+      // {id: 1, isin: '789456123', name: 'Asd123', profit: 0.2, duration: 0.5},
+      // {id: 2, isin: '123456', name: 'Asd123', profit: 0.3, duration: 0.3},
+      // {id: 3, isin: '123', name: 'Asd123', profit: 0.74, duration: 0.4},
+      // {id: 4, isin: '456', name: 'Asd123', profit: 0.35, duration: 0.54},
+      // {id: 5, isin: '789', name: 'Asd123', profit: 0.23, duration: 0.3},
+      // {id: 6, isin: '456123', name: 'Asd123', profit: 0.49, duration: 0.2},
+      // {id: 7, isin: '71432', name: 'Asd123', profit: 0.85, duration: 0.1},
+    
     filterIsin: '',
     filterName: '',
     typeItems: [
@@ -339,6 +381,10 @@ export default {
           'Региональная облигация',
     ],
     typeValue: [],
+    emitentItems: [],
+    emitentValue: [],
+    sectorValue: [],
+    sectorItems: [],
     selected: [],
     headers: [           
         {text: 'Название', value: 'name', align: 'center', sortable: false},
@@ -350,8 +396,8 @@ export default {
         {text: 'Лучшее предл.', value: 'best_predl'},
         {text: 'Оборот', value: 'oborot'},
         {text: 'Тип', value: 'type'},
-        {text: 'Эмитент', value: 'emitent.shortName'},
-        {text: 'Сектор', value: 'emitent.sector'}
+        {text: 'Эмитент', value: 'emitent.shortName', sortable: false},
+        {text: 'Сектор', value: 'emitent.sector', sortable: false}
     ],
     loading: true,
     scatters: [],
@@ -367,6 +413,8 @@ export default {
       this.bonds = await BondsService.getBonds()
       this.items = this.bonds
       this.getScatters()
+      this.getEmitentItems()
+      this.getSectorItems()
       this.chartOptions = {
       chart: {
         height: 700,
@@ -687,6 +735,22 @@ export default {
           
         })
       }
+
+      if(this.emitentValue) {
+        const emitent = this.emitentValue
+        finalArr = finalArr.filter(item => {
+          if(item.emitent.shortName == emitent) {
+            return item
+          }
+        })
+      }
+
+      if(this.sectorValue) {
+        const sector = this.sectorValue
+        finalArr = finalArr.filter(item => {
+          return item.emitent.sector.indexOf(sector) > -1
+        })
+      }
       this.items = finalArr
 
       this.getScatters()
@@ -696,12 +760,25 @@ export default {
       }, 0)
     },
     resetFilters() {
+      this.filterName = ''
+      this.filterIsin = ''
+      this.emitentValue = ''
+      this.sectorValue = ''
       this.typeValue = this.typeItems
       this.items = this.bonds
     },
     chartsCreateLine(line) {
       const colors = this.colors
       const seriesData = this.getLine(line)
+      const seriesIndex = this.chart.series.findIndex(item => item.name == line.name)
+
+      if(seriesIndex != -1) {
+        this.snackbar = true
+        this.snackbarstatus = 'error'
+        this.snackbarText = 'Группа «' + line.name + '» уже отображена'
+        return
+      }
+
       const series = {
           name: line.name,
           color: this.colors[Math.floor(Math.random() * colors.length)],
@@ -738,6 +815,38 @@ export default {
       this.snackbar = true
       this.snackbarstatus = 'success'
       this.snackbarText = 'Группа «' + group.name + '» успешно удалена'
+    },
+    getEmitentItems() {
+      const tempArr = []
+      this.items.map(items => {
+        tempArr.push(
+          items.emitent.shortName
+        )
+      })
+
+      for(let str of tempArr){
+        if( !this.emitentItems.includes(str) && str != null ){
+          this.emitentItems.push(
+            str
+          )
+        }
+      }
+    },
+    getSectorItems() {
+      const tempArr = []
+      this.items.map(items => {
+        tempArr.push(
+          items.emitent.sector
+        )
+      })
+
+      for(let str of tempArr){
+        if( !this.sectorItems.includes(str) && str != null ){
+          this.sectorItems.push(
+            str
+          )
+        }
+      }
     }
   },
   computed: {

@@ -59,7 +59,7 @@
                                 <v-icon>mdi-chart-line</v-icon>
                             </v-btn>
                         </template>
-                        <span>Стереть группу</span>
+                        <span>Скрыть группу</span>
                     </v-tooltip>
                     
                     <v-tooltip v-if="isAdmin" bottom>
@@ -167,7 +167,7 @@
                                 <v-icon>mdi-chart-line</v-icon>
                             </v-btn>
                         </template>
-                        <span>Стереть группу</span>
+                        <span>Скрыть группу</span>
                     </v-tooltip>
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
