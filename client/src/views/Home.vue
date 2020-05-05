@@ -209,7 +209,8 @@
                                         hide-details
                                         outlined
                                         dense
-                                        type="number"
+                                        step="0.01"
+                                        ticks
                                         style="width: 60px"
                                         @change="$set(durationRange, 0, $event)"
                                       ></v-text-field>
@@ -221,9 +222,10 @@
                                         hide-details
                                         outlined
                                         dense
-                                        type="number"
+                                        step="0.01"
+                                        ticks
                                         style="width: 60px"
-                                        @change="$set(profitRange, 1, $event)"
+                                        @change="$set(durationRange, 1, $event)"
                                       ></v-text-field>
                                     </template>
                                   </v-range-slider>
@@ -447,9 +449,9 @@ export default {
     profitRange: [4, 7],
     profitRangeMin: -5,
     profitRangeMax: 20,
-    durationRange: [0, 5],
-    durationRangeMin: 0,
-    durationRangeMax: 5,
+    durationRange: [0.01, 5.00],
+    durationRangeMin: 0.00,
+    durationRangeMax: 5.00,
     oborotRange: [0, 50],
     oborotRangeMin: 0,
     oborotRangeMax: 100,
@@ -830,7 +832,7 @@ export default {
       if(this.filterIsin) {
         const isin = this.filterIsin.toUpperCase()
         finalArr = finalArr.filter(item => {
-          return item.isin.indexOf(isin) > -1 
+          return item.isin.toUpperCase().indexOf(isin) > -1 
         })
         
       }
@@ -838,7 +840,7 @@ export default {
       if(this.filterName) {
         const name = this.filterName.toUpperCase()
         finalArr = finalArr.filter(item => {
-          return item.name.indexOf(name) > -1
+          return item.name.toUpperCase().indexOf(name) > -1
           
         })
       }
@@ -890,7 +892,7 @@ export default {
       this.sectorValue = ''
       this.profitRange = [4,7]
       this.durationRange = [0,5]
-      this.oborotRange = [0,50]
+      this.oborotRange = [this.oborotRangeMin, this.oborotRangeMax]
       this.typeValue = this.typeItems
       this.items = this.bonds
       this.filterData()
