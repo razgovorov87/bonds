@@ -488,7 +488,7 @@ export default {
     sectorItems: [],
     selected: [],
     headers: [           
-        {text: 'Название', value: 'name', align: 'center', sortable: false},
+        {text: 'Название', value: 'name', align: 'center', sortable: false, width: '190px'},
         {text: 'ISIN',  value: 'isin', sortable: false},
         {text: 'Доходность', value: 'profit'},
         {text: 'Дюрация', value: 'duration'},
@@ -496,9 +496,9 @@ export default {
         {text: 'Лучший спрос', value: 'best_spros'},
         {text: 'Лучшее предл.', value: 'best_predl'},
         {text: 'Оборот', value: 'oborot'},
-        {text: 'Тип', value: 'type'},
-        {text: 'Эмитент', value: 'emitent.shortName', sortable: false},
-        {text: 'Сектор', value: 'emitent.sector', sortable: false}
+        {text: 'Тип', value: 'type', width: '243px'},
+        {text: 'Эмитент', value: 'emitent.shortName', sortable: false, width: '240px'},
+        {text: 'Сектор', value: 'emitent.sector', sortable: false, width: '240px'}
     ],
     loading: true,
     scatters: [],
