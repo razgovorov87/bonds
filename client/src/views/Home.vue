@@ -499,8 +499,8 @@ export default {
         {text: 'Лучшее предл.', value: 'best_predl'},
         {text: 'Оборот', value: 'oborot'},
         {text: 'Тип', value: 'type', width: '243px'},
-        {text: 'Эмитент', value: 'emitent.shortName', sortable: false, width: '240px'},
-        {text: 'Сектор', value: 'emitent.sector', sortable: false, width: '240px'}
+        {text: 'Эмитент', value: 'emitent.shortName', width: '240px'},
+        {text: 'Сектор', value: 'emitent.sector', width: '240px'}
     ],
     loading: true,
     scatters: [],

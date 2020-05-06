@@ -65,7 +65,7 @@
                                 small
                                 icon
                                 v-on="on"
-                                @click="trashBaseLine(line)"
+                                @click="agreeDeleteGroup(line, 'baseLine')"
                             >
                                 <v-icon>mdi-delete</v-icon>
                             </v-btn>
@@ -172,7 +172,7 @@
                                 small
                                 icon
                                 v-on="on"
-                                @click="agreeDeleteGroup(group)"
+                                @click="agreeDeleteGroup(group, 'userGroup')"
                             >
                                 <v-icon>mdi-delete</v-icon>
                             </v-btn>
@@ -257,7 +257,7 @@
 
                 <v-btn
                     color="error darken-1"
-                    @click="trashUserGroup(group)"
+                    @click="deleteGroup()"
                 >
                     Да, удалить
                 </v-btn>
@@ -276,7 +276,8 @@ export default {
     data: () => ({
         loading: true,
         baseLines: [],
-        deletebleUserGroup: '',
+        deletableTypeGroup: '',
+        deletebleGroup: '',
         dialogAddBaseLine: false,
         dialogAddUserGroup: false,
         deleteDialog: false,
@@ -298,9 +299,17 @@ export default {
         this.loading = false
     },
     methods: {
-        agreeDeleteGroup(group) {
+        agreeDeleteGroup(group, type) {
             this.deleteDialog = true
-            this.deletebleUserGroup = group
+            this.deletebleGroup = group
+            this.deletableTypeGroup = type
+        },
+        deleteGroup() {
+            if(this.deletableTypeGroup == 'userGroup') {
+                this.trashUserGroup(this.deletebleGroup)
+            } else if (this.deletableTypeGroup == 'baseLine') {
+                this.trashBaseLine(this.deletebleGroup)
+            }
         },
         async fetchBaseLine() {
             this.loading = true
@@ -319,7 +328,9 @@ export default {
             this.$parent.$parent.chartsDeleteLine(line)
         },
         trashBaseLine(line) {
-            this.$parent.$parent.trashBaseLine(line)
+            this.deleteDialog = false
+            this.$parent.$parent.trashBaseLine(this.deletebleGroup)
+            this.deletebleUserGroup = ''
         },
         createUserGroupLine(group) {
             this.$parent.$parent.chartsCreateLine(group)
@@ -329,7 +340,7 @@ export default {
         },
         trashUserGroup() {
             this.deleteDialog = false
-            this.$parent.$parent.trashUserGroup(this.deletebleUserGroup)
+            this.$parent.$parent.trashUserGroup(this.deletebleGroup)
             this.deletebleUserGroup = ''
         },
         async createBaseLine() {
