@@ -901,7 +901,9 @@ export default {
 
       this.getScatters()
 
-      this.loading = false
+      setTimeout(() => {
+        this.loading = false
+      }, 500)
     },
     resetFilters() {
       this.filterName = ''
