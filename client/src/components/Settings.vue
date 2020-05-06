@@ -5,17 +5,13 @@
         >
             <v-list-item-title class="headline">Построения</v-list-item-title>
         </v-list-item>
-        <v-skeleton-loader
-            v-if="loading"
-            type="article"
-            dark
-            class="mb-2"
-        ></v-skeleton-loader>
-         <v-skeleton-loader
-            v-if="loading"
-            type="article"
-            dark
-        ></v-skeleton-loader>
+        <div v-if="loading" class="d-flex justify-center mt-5" style="width: 100%">
+            <v-progress-circular
+                :size="50"
+                color="primary"
+                indeterminate
+            ></v-progress-circular>
+        </div>
         <v-list
             v-else
             dark
@@ -176,7 +172,7 @@
                                 small
                                 icon
                                 v-on="on"
-                                @click="trashUserGroup(group)"
+                                @click="agreeDeleteGroup(group)"
                             >
                                 <v-icon>mdi-delete</v-icon>
                             </v-btn>
@@ -237,6 +233,38 @@
             </v-card>
             </v-dialog>
 
+            <v-dialog
+                v-model="deleteDialog"
+                max-width="520"
+            >
+            <v-card>
+                <v-card-title class="headline">Вы действительно хотите удалить группу?</v-card-title>
+
+                <v-card-text>
+                Помните, что после удаления восстановить группу не получиться
+                </v-card-text>
+
+                <v-card-actions>
+                <v-spacer></v-spacer>
+
+                <v-btn
+                    color="primary darken-1"
+                    text
+                    @click="deleteDialog = false"
+                >
+                    Отмена
+                </v-btn>
+
+                <v-btn
+                    color="error darken-1"
+                    @click="trashUserGroup(group)"
+                >
+                    Да, удалить
+                </v-btn>
+                </v-card-actions>
+            </v-card>
+            </v-dialog>
+
         </v-list>
     </div>
 </template>
@@ -248,8 +276,10 @@ export default {
     data: () => ({
         loading: true,
         baseLines: [],
+        deletebleUserGroup: '',
         dialogAddBaseLine: false,
         dialogAddUserGroup: false,
+        deleteDialog: false,
         baseLineName: '',
         baseLineNameRules: [
             v => !!v || 'Введите название',
@@ -268,6 +298,10 @@ export default {
         this.loading = false
     },
     methods: {
+        agreeDeleteGroup(group) {
+            this.deleteDialog = true
+            this.deletebleUserGroup = group
+        },
         async fetchBaseLine() {
             this.loading = true
             this.baseLines = await this.$store.dispatch('fetchBaseLine')
@@ -293,8 +327,10 @@ export default {
         deleteUserGroupLine(group) {
             this.$parent.$parent.chartsDeleteLine(group)
         },
-        trashUserGroup(group) {
-            this.$parent.$parent.trashUserGroup(group)
+        trashUserGroup() {
+            this.deleteDialog = false
+            this.$parent.$parent.trashUserGroup(this.deletebleUserGroup)
+            this.deletebleUserGroup = ''
         },
         async createBaseLine() {
             const result = await this.$store.dispatch('fetchBaseLineDublicate', this.baseLineName)

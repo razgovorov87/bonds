@@ -174,7 +174,7 @@
                                         dense
                                         outlined
                                         type="number"
-                                        style="width: 60px"
+                                        style="width: 100px"
                                         @change="$set(profitRange, 0, $event)"
                                       ></v-text-field>
                                     </template>
@@ -186,7 +186,7 @@
                                         dense
                                         outlined
                                         type="number"
-                                        style="width: 60px"
+                                        style="width: 100px"
                                         @change="$set(profitRange, 1, $event)"
                                       ></v-text-field>
                                     </template>
@@ -200,18 +200,18 @@
                                   :max="durationRangeMax"
                                   :min="durationRangeMin"
                                   hide-details
+                                  step="0.01"
                                   class="align-center"
                                   >
                                     <template v-slot:prepend>
                                       <v-text-field
-                                        :value="durationRange[0]"
+                                        :value="parseFloat(durationRange[0])"
                                         class="mt-0 pt-0"
                                         hide-details
                                         outlined
                                         dense
-                                        step="0.01"
-                                        ticks
-                                        style="width: 60px"
+                                        type="number"
+                                        style="width: 80px"
                                         @change="$set(durationRange, 0, $event)"
                                       ></v-text-field>
                                     </template>
@@ -222,9 +222,8 @@
                                         hide-details
                                         outlined
                                         dense
-                                        step="0.01"
-                                        ticks
-                                        style="width: 60px"
+                                        type="number"
+                                        style="width: 80px"
                                         @change="$set(durationRange, 1, $event)"
                                       ></v-text-field>
                                     </template>
@@ -232,18 +231,19 @@
                               </v-col>
 
                               <v-col cols="4">
-                                <p class="text-center subtitle-2">Оборот, тыс.руб</p>
+                                <p class="text-center subtitle-2">Оборот, млн.руб</p>
                                 <v-range-slider
                                   v-model="oborotRange"
                                   :max="oborotRangeMax"
                                   :min="oborotRangeMin"
                                   hide-details
+                                  step="0.1"
                                   class="align-center"
                                   >
                                     <template v-slot:prepend>
                                       <v-text-field
                                         :value="oborotRange[0]"
-                                        suffix="тыс"
+                                        suffix="млн"
                                         class="mt-0 pt-0"
                                         hide-details
                                         outlined
@@ -255,7 +255,7 @@
                                     <template v-slot:append>
                                       <v-text-field
                                         :value="oborotRange[1]"
-                                        suffix="тыс"
+                                        suffix="млн"
                                         class="mt-0 pt-0"
                                         hide-details
                                         outlined
@@ -687,13 +687,13 @@ export default {
         this.snackbarText = 'Неверное кол-во элементов'
         return
       }
-      
+      const selectedItems = this.selected.map(item => item.isin)
+
       this.baseLineSnackbar = false
       const groupData = {
         name: this.baseLineName,
-        bonds: this.selected
+        bonds: selectedItems
       }
-
       await this.$store.dispatch('createBaseLine', groupData)
 
       this.snackbar = true
@@ -712,10 +712,13 @@ export default {
         this.snackbarText = 'Неверное кол-во элементов'
         return
       }
+
+      const selectedItems = this.selected.map(item => item.isin)
+
       this.userGroupSnackbar = false
       const groupData = {
         name: this.userGroupName,
-        bonds: this.selected
+        bonds: selectedItems
       }
 
       await this.$store.dispatch('createUserGroup', groupData)
@@ -775,16 +778,11 @@ export default {
     },
     getLine(item) {
       const sortedData = []
-      item.bonds.filter(bond => {
-        sortedData.push({
-          id: bond.isin,
-          name: bond.name,
-          last_price: bond.last_price,
-          best_spros: bond.best_spros,
-          best_predl: bond.best_predl,
-          oborot: bond.oborot,
-          x: bond.duration,
-          y: bond.profit
+      item.bonds.forEach(bond => {
+        this.scatters.find(item => {
+          if(item.id == bond) {
+            sortedData.push(item)
+          }
         })
       })
       
@@ -876,7 +874,7 @@ export default {
       })
 
       finalArr = finalArr.filter(item => {
-        if((this.oborotRange[0] * 1000) <= item.oborot && (this.oborotRange[1] * 1000) >= item.oborot) {
+        if((this.oborotRange[0] * 1000000) <= item.oborot && (this.oborotRange[1] * 1000000) >= item.oborot) {
           return item
         }
       })
@@ -997,7 +995,7 @@ export default {
       
       this.profitRangeMax = Math.ceil(profitMax)
       this.durationRangeMax = Math.ceil(durationMax)
-      this.oborotRangeMax = Math.ceil(oborotMax / 1000)
+      this.oborotRangeMax = Math.ceil(oborotMax / 1000000)
     },
     getMinValue() {
       let profitMin = 0
@@ -1018,7 +1016,7 @@ export default {
       
       this.profitRangeMin = Math.floor(profitMin)
       this.durationRangeMin = Math.floor(durationMin)
-      this.oborotRangeMin = Math.floor(oborotMin / 1000)
+      this.oborotRangeMin = Math.floor(oborotMin / 1000000)
     }
   },
   computed: {
