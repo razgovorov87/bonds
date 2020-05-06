@@ -1,6 +1,20 @@
 <template>
   <v-row>
 
+    <v-overlay opacity="0.6" :value="loading">
+      <div class="d-flex justify-center align-center">
+
+        <v-progress-circular
+          :size="50"
+          color="primary"
+          indeterminate
+          class="mr-3"
+        ></v-progress-circular>
+        <span>{{loadingText}}</span>
+
+      </div>
+    </v-overlay>
+
     
     <v-navigation-drawer
       v-model="settingsDrawer"
@@ -512,6 +526,7 @@ export default {
   }),
   async created() {
     try {
+      this.loadingText = 'Обработка данных...'
       this.typeValue = this.typeItems
       this.emitentValue = ''
       this.sectorValue = ''
@@ -796,6 +811,8 @@ export default {
 
     },
     async filterData() {
+      this.loading = true
+      this.loadingText = 'Фильтруем данные...'
       const typesName = this.typeValue
       const filtered = this.bonds.filter(function(bond) {
         switch(bond.type) {
@@ -881,7 +898,10 @@ export default {
 
       this.items = finalArr
 
+
       this.getScatters()
+
+      this.loading = false
     },
     resetFilters() {
       this.filterName = ''
@@ -952,6 +972,8 @@ export default {
         )
       })
 
+      tempArr.sort()
+
       for(let str of tempArr){
         if( !this.emitentItems.includes(str) && str != null ){
           this.emitentItems.push(
@@ -967,6 +989,8 @@ export default {
           items.emitent.sector
         )
       })
+      
+      tempArr.sort()
 
       for(let str of tempArr){
         if( !this.sectorItems.includes(str) && str != null ){
