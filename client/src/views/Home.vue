@@ -922,6 +922,45 @@ export default {
       this.items = this.bonds
       this.filterData()
     },
+    editTypeLine(line) {
+      const seriesIndex = this.chart.series.findIndex(item => item.name == line.name)
+      
+      
+      if(seriesIndex == -1) {
+        return
+      }
+      
+      const colors = this.chart.series[seriesIndex].color
+      const marker = this.chart.series[seriesIndex].symbol
+      let typeLine = this.chart.series[seriesIndex].type
+
+      if (typeLine == 'line') {
+        typeLine = 'spline'
+      }
+      else if (typeLine == 'spline') {
+        typeLine = 'line'
+      }
+      const seriesData = this.getLine(line)
+  
+      const series = {
+          type: typeLine,
+          name: line.name,
+          color: colors,
+          lineWidth: 3,
+          marker: {
+            lineColor: colors,
+            radius: 6,
+            symbol: marker
+          },
+          stickyTracking: false,
+          data: seriesData
+        }
+      
+      
+      this.chartsDeleteLine(line)  
+      this.chart.addSeries(series)
+      
+    },
     chartsCreateLine(line, arr) {
       const colors = this.colors
       const seriesData = this.getLine(line)

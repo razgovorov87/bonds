@@ -84,7 +84,10 @@
                 </div>
                 <v-divider style="border-color: rgba(255,255,255, 0.3)"></v-divider>
                 <div class="d-flex px-3 align-center justify-space-between">
-                    <v-switch v-model="typeLine" :value="line.name" inset dense prepend-icon="mdi-chart-line" append-icon="mdi-chart-bell-curve-cumulative"></v-switch>
+                    <v-switch 
+                        v-model="typeLine" :value="line.name" inset dense prepend-icon="mdi-chart-line" append-icon="mdi-chart-bell-curve-cumulative"
+                        @change="editTypeLine(line)"
+                    ></v-switch>
                     <v-btn small color="info" disabled>
                         Облигации
                     </v-btn>
@@ -200,7 +203,10 @@
                 </div>
                 <v-divider style="border-color: rgba(255,255,255, 0.3)"></v-divider>
                 <div class="d-flex px-3 align-center justify-space-between">
-                    <v-switch v-model="typeLine" :value="group.name" inset dense prepend-icon="mdi-chart-line" append-icon="mdi-chart-bell-curve-cumulative"></v-switch>
+                    <v-switch 
+                    v-model="typeLine" :value="group.name" inset dense prepend-icon="mdi-chart-line" append-icon="mdi-chart-bell-curve-cumulative"
+                    @change="editTypeLine(line)"
+                    ></v-switch>
                     <v-btn small color="info" disabled>
                         Облигации
                     </v-btn>
@@ -307,6 +313,10 @@
 }
 </style>
 
+
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vuesax"></script>
+
 <script>
 import {required} from 'vuelidate/lib/validators'
 export default {
@@ -337,6 +347,9 @@ export default {
         this.loading = false
     },
     methods: {
+        editTypeLine(line) {
+            this.$parent.$parent.editTypeLine(line)
+        },
         closeDrawer() {
             this.$parent.$parent.settingsDrawer = false
         },

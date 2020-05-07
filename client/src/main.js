@@ -9,6 +9,7 @@ import vuetify from './plugins/vuetify'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
+import 'vuesax/dist/vuesax.css'
 
 Vue.config.productionTip = false
 
