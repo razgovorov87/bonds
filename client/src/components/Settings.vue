@@ -205,7 +205,7 @@
                 <div class="d-flex px-3 align-center justify-space-between">
                     <v-switch 
                     v-model="typeLine" :value="group.name" inset dense prepend-icon="mdi-chart-line" append-icon="mdi-chart-bell-curve-cumulative"
-                    @change="editTypeLine(line)"
+                    @change="editTypeLine(group)"
                     ></v-switch>
                     <v-btn small color="info" disabled>
                         Облигации
