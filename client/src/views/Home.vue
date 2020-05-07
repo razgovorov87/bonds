@@ -935,6 +935,7 @@ export default {
       }
 
       const series = {
+          type: 'spline',
           name: line.name,
           color: this.colors[Math.floor(Math.random() * colors.length)],
           lineWidth: 3,
