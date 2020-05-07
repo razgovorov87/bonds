@@ -1,7 +1,7 @@
 <template>
   <v-row>
 
-    <v-overlay opacity="0.6" :value="loading">
+    <v-overlay opacity="0.6" :value="loadingOverlay">
       <div class="d-flex justify-center align-center">
 
         <v-progress-circular
@@ -517,6 +517,7 @@ export default {
         {text: 'Сектор', value: 'emitent.sector', width: '240px'}
     ],
     loading: true,
+    loadingOverlay: true,
     scatters: [],
     items: [],
     error: '',
@@ -636,6 +637,7 @@ export default {
     }
 
     this.loading = false
+    this.loadingOverlay = false
 
     } catch (e) {
       this.error = e.message
@@ -765,9 +767,12 @@ export default {
     },
     async refreshPage() {
       this.loading = true
+      this.loadingOverlay = true
+      this.loadingText = 'Обновляем данные...'
       this.bonds = await BondsService.getBonds();
       this.filterData()
       this.loading = false
+      this.loadingOverlay = false
       // setTimeout(() => {
       //   this.chart.series[0].setData(this.scatters)
       //   this.chart.navigator.series[0].data = this.scatters
@@ -811,7 +816,7 @@ export default {
 
     },
     async filterData() {
-      this.loading = true
+      this.loadingOverlay = true
       this.loadingText = 'Фильтруем данные...'
       const typesName = this.typeValue
       const filtered = this.bonds.filter(function(bond) {
@@ -902,7 +907,7 @@ export default {
       this.getScatters()
 
       setTimeout(() => {
-        this.loading = false
+        this.loadingOverlay = false
       }, 500)
     },
     resetFilters() {

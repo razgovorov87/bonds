@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const url = 'http://82.148.31.138:80/api/bonds';
+const url = 'http://localhost:80/api/bonds';
 
 class BondsService {
     //get
