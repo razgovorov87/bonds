@@ -4,6 +4,13 @@
             dark
         >
             <v-list-item-title class="headline">Построения</v-list-item-title>
+            <v-spacer></v-spacer>
+            <v-btn
+                icon
+                @click.stop="closeDrawer()"
+            >
+                <v-icon>mdi-close</v-icon>
+            </v-btn>
         </v-list-item>
         <div v-if="loading" class="d-flex justify-center mt-5" style="width: 100%">
             <v-progress-circular
@@ -26,52 +33,61 @@
             </v-chip>
         </div>
 
-        <v-list-item v-else v-for="line in baseLines" :key="line.name" class="mb-2">
-            <v-card class="d-flex align-center justify-space-between px-2" style="width: 100%">
-                <v-list-item>{{line.name}}</v-list-item>
-                <div class="d-flex">
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-                            <v-btn
-                                color="success"
-                                class="mr-2"
-                                small
-                                @click="createLine(line)"
-                                v-on="on"
-                            >
-                                <v-icon>mdi-chart-line</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>Отобразить группу</span>
-                    </v-tooltip>
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-                            <v-btn
-                                color="error"
-                                small
-                                @click="deleteLine(line)"
-                                v-on="on"
-                            >
-                                <v-icon>mdi-chart-line</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>Скрыть группу</span>
-                    </v-tooltip>
-                    
-                    <v-tooltip v-if="isAdmin" bottom>
-                        <template v-slot:activator="{ on }">
-                            <v-btn
-                                color="error"
-                                small
-                                icon
-                                v-on="on"
-                                @click="agreeDeleteGroup(line, 'baseLine')"
-                            >
-                                <v-icon>mdi-delete</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>Удалить группу</span>
-                    </v-tooltip>
+        <v-list-item v-else v-for="line in baseLines" :key="line.name" class="mb-2" two-line>
+            <v-card class="d-flex px-2 flex-column" style="width: 100%">
+                <div class="d-flex align-center justify-space-between" style="width: 100%">
+                    <v-list-item>{{line.name}}</v-list-item>
+                    <div class="d-flex">
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn
+                                    color="success"
+                                    class="mr-2"
+                                    small
+                                    @click="createLine(line)"
+                                    v-on="on"
+                                >
+                                    <v-icon>mdi-chart-line</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>Отобразить группу</span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn
+                                    color="error"
+                                    small
+                                    @click="deleteLine(line)"
+                                    v-on="on"
+                                >
+                                    <v-icon>mdi-chart-line</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>Скрыть группу</span>
+                        </v-tooltip>
+                        
+                        <v-tooltip v-if="isAdmin" bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn
+                                    color="error"
+                                    small
+                                    icon
+                                    v-on="on"
+                                    @click="agreeDeleteGroup(line, 'baseLine')"
+                                >
+                                    <v-icon>mdi-delete</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>Удалить группу</span>
+                        </v-tooltip>
+                    </div>
+                </div>
+                <v-divider style="border-color: rgba(255,255,255, 0.3)"></v-divider>
+                <div class="d-flex px-3 align-center justify-space-between">
+                    <v-switch v-model="typeLine" :value="line.name" inset dense prepend-icon="mdi-chart-line" append-icon="mdi-chart-bell-curve-cumulative"></v-switch>
+                    <v-btn small color="info" disabled>
+                        Облигации
+                    </v-btn>
                 </div>
             </v-card>
             
@@ -134,51 +150,60 @@
                 </v-chip>
             </div>
             <v-list-item v-else v-for="group in userGroups" :key="group.name" class="mb-2">
-            <v-card class="d-flex align-center justify-space-between px-2" style="width: 100%">
-                <v-list-item>{{group.name}}</v-list-item>
-                <div class="d-flex">
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-                            <v-btn
-                                color="success"
-                                class="mr-2"
-                                small
-                                v-on="on"
-                                @click="createUserGroupLine(group)"
-                            >
-                                <v-icon>mdi-chart-line</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>Отобразить группу</span>
-                    </v-tooltip>
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-                            <v-btn
-                                color="error"
-                                class="mr-2"
-                                small
-                                v-on="on"
-                                @click="deleteUserGroupLine(group)"
-                            >
-                                <v-icon>mdi-chart-line</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>Скрыть группу</span>
-                    </v-tooltip>
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-                            <v-btn
-                                color="error"
-                                small
-                                icon
-                                v-on="on"
-                                @click="agreeDeleteGroup(group, 'userGroup')"
-                            >
-                                <v-icon>mdi-delete</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>Удалить группу</span>
-                    </v-tooltip>
+            <v-card class="d-flex flex-column px-2" style="width: 100%">
+                <div class="d-flex align-center justify-space-between" style="width: 100%">
+                    <v-list-item>{{group.name}}</v-list-item>
+                        <div class="d-flex">
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn
+                                    color="success"
+                                    class="mr-2"
+                                    small
+                                    v-on="on"
+                                    @click="createUserGroupLine(group)"
+                                >
+                                    <v-icon>mdi-chart-line</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>Отобразить группу</span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn
+                                    color="error"
+                                    class="mr-2"
+                                    small
+                                    v-on="on"
+                                    @click="deleteUserGroupLine(group)"
+                                >
+                                    <v-icon>mdi-chart-line</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>Скрыть группу</span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn
+                                    color="error"
+                                    small
+                                    icon
+                                    v-on="on"
+                                    @click="agreeDeleteGroup(group, 'userGroup')"
+                                >
+                                    <v-icon>mdi-delete</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>Удалить группу</span>
+                        </v-tooltip>
+                    </div>
+                </div>
+                <v-divider style="border-color: rgba(255,255,255, 0.3)"></v-divider>
+                <div class="d-flex px-3 align-center justify-space-between">
+                    <v-switch v-model="typeLine" :value="group.name" inset dense prepend-icon="mdi-chart-line" append-icon="mdi-chart-bell-curve-cumulative"></v-switch>
+                    <v-btn small color="info" disabled>
+                        Облигации
+                    </v-btn>
                 </div>
             </v-card>
             
@@ -269,12 +294,25 @@
     </div>
 </template>
 
+<style>
+.v-input__append-outer {
+    margin-left: -5px !important;
+    
+}
+.v-input__prepend-outer .v-input__icon--prepend i::before {
+    font-size: 22px;
+}
+.v-input__append-outer .v-input__icon--append i::before {
+    font-size: 20px;
+}
+</style>
 
 <script>
 import {required} from 'vuelidate/lib/validators'
 export default {
     data: () => ({
         loading: true,
+        typeLine: [],
         baseLines: [],
         deletableTypeGroup: '',
         deletebleGroup: '',
@@ -299,6 +337,9 @@ export default {
         this.loading = false
     },
     methods: {
+        closeDrawer() {
+            this.$parent.$parent.settingsDrawer = false
+        },
         agreeDeleteGroup(group, type) {
             this.deleteDialog = true
             this.deletebleGroup = group
@@ -322,7 +363,7 @@ export default {
             this.loading = false
         },
         createLine(line) {
-            this.$parent.$parent.chartsCreateLine(line)
+            this.$parent.$parent.chartsCreateLine(line, this.typeLine)
         },
         deleteLine(line) {
             this.$parent.$parent.chartsDeleteLine(line)
@@ -333,7 +374,7 @@ export default {
             this.deletebleUserGroup = ''
         },
         createUserGroupLine(group) {
-            this.$parent.$parent.chartsCreateLine(group)
+            this.$parent.$parent.chartsCreateLine(group, this.typeLine)
         },
         deleteUserGroupLine(group) {
             this.$parent.$parent.chartsDeleteLine(group)

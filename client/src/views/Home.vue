@@ -922,10 +922,12 @@ export default {
       this.items = this.bonds
       this.filterData()
     },
-    chartsCreateLine(line) {
+    chartsCreateLine(line, arr) {
       const colors = this.colors
       const seriesData = this.getLine(line)
       const seriesIndex = this.chart.series.findIndex(item => item.name == line.name)
+      let typeLine = false
+      let resultType = false
 
       if(seriesIndex != -1) {
         this.snackbar = true
@@ -934,8 +936,20 @@ export default {
         return
       }
 
+      arr.forEach((item) => {
+        if(line.name == item) {
+          resultType = true
+        }
+      })
+
+      if(resultType) {
+        typeLine = 'spline'
+      } else {
+        typeLine = 'line'
+      }
+
       const series = {
-          type: 'spline',
+          type: typeLine,
           name: line.name,
           color: this.colors[Math.floor(Math.random() * colors.length)],
           lineWidth: 3,
