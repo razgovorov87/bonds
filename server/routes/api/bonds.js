@@ -4,7 +4,7 @@ const mongodb = require('mongodb');
 
 const router = express.Router();
 
-const url = 'mongodb://1QNY0B3RHm:cBjhRDQ4uW@127.0.0.1:27017/ps?authSource=bonds'
+const url = 'mongodb://1QNY0B3RHm:cBjhRDQ4uW@82.148.31.138:27017/ps?authSource=bonds'
 // 'mongodb://admin:admin@veleslavdb-shard-00-00-kxrp7.mongodb.net:27017,veleslavdb-shard-00-01-kxrp7.mongodb.net:27017,veleslavdb-shard-00-02-kxrp7.mongodb.net:27017/test?ssl=true&replicaSet=VeleslavDB-shard-0&authSource=admin&retryWrites=true&w=majority'
 
 
