@@ -63,5 +63,13 @@ export default {
                 await firebase.database().ref(`/baseline/${line.name}`).remove()
             } catch (e) {throw e}
         },
+        async deleteUserBondOnList({dispatch}, {group, bond}) {
+            try {
+                const uid = await dispatch('getUid')
+                const line = (await firebase.database().ref(`/users/${uid}/groups/${group.name}/bonds/`).once('value')).val()
+                const index = line.findIndex(item => item == bond)
+                await firebase.database().ref(`/users/${uid}/groups/${group.name}/bonds/${index}`).remove()
+            } catch (e) {throw e}
+        },
     }
 }

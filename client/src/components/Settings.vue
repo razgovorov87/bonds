@@ -88,9 +88,14 @@
                         v-model="typeLine" :value="line.name" inset dense prepend-icon="mdi-chart-line" append-icon="mdi-chart-bell-curve-cumulative"
                         @change="editTypeLine(line)"
                     ></v-switch>
-                    <v-btn small color="info" disabled>
-                        Облигации
-                    </v-btn>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on }">
+                            <v-btn v-on="on" small color="info" @click="showBondsList(line)">
+                                Облигации
+                            </v-btn>
+                        </template>
+                        <span>Показать список</span>
+                    </v-tooltip>
                 </div>
             </v-card>
             
@@ -207,9 +212,14 @@
                     v-model="typeLine" :value="group.name" inset dense prepend-icon="mdi-chart-line" append-icon="mdi-chart-bell-curve-cumulative"
                     @change="editTypeLine(group)"
                     ></v-switch>
-                    <v-btn small color="info" disabled>
-                        Облигации
-                    </v-btn>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on }">
+                            <v-btn v-on="on" small color="info" @click="showBondsList(group)">
+                                Облигации
+                            </v-btn>
+                        </template>
+                        <span>Показать список</span>
+                    </v-tooltip>
                 </div>
             </v-card>
             
@@ -264,35 +274,74 @@
             </v-card>
             </v-dialog>
 
+            <v-dialog v-model="deleteDialog" max-width="520">
+                <v-card>
+                    <v-card-title class="headline">Вы действительно хотите удалить группу?</v-card-title>
+
+                    <v-card-text>
+                    Помните, что после удаления восстановить группу не получиться
+                    </v-card-text>
+
+                    <v-card-actions>
+                    <v-spacer></v-spacer>
+
+                    <v-btn
+                        color="primary darken-1"
+                        text
+                        @click="deleteDialog = false"
+                    >
+                        Отмена
+                    </v-btn>
+
+                    <v-btn
+                        color="error darken-1"
+                        @click="deleteGroup()"
+                    >
+                        Да, удалить
+                    </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+
             <v-dialog
-                v-model="deleteDialog"
+                v-model="bondDialog"
                 max-width="520"
             >
             <v-card>
-                <v-card-title class="headline">Вы действительно хотите удалить группу?</v-card-title>
-
+                <v-toolbar class="info" dark>
+                    <v-toolbar-title>Список облигаций</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-btn icon @click.stop="bondDialog = false">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                </v-toolbar>
+                
                 <v-card-text>
-                Помните, что после удаления восстановить группу не получиться
+                    <v-skeleton-loader v-if="bondDialogLoading" type="table"></v-skeleton-loader>
+                    <v-simple-table v-else>
+                        <thead>
+                            <th class="text-left">Название</th>
+                            <th class="text-left">ISIN</th>
+                            <!-- <th class="text-left"></th> -->
+                        </thead>
+                        <tbody>
+                            <tr v-for="bond of bondsList" :key="bond.isin">
+                                <td>{{bond.name}}</td>
+                                <td>{{bond.isin}}</td>
+                                <!-- <td>
+                                    <v-tooltip right>
+                                        <template v-slot:activator="{ on }">
+                                            <v-btn small icon v-on="on" @click="deleteBondOnList(bond.isin)">
+                                                <v-icon class="red--text">mdi-delete</v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span class="font-weight-bold">Удалить {{bond.name}}</span>
+                                    </v-tooltip>
+                                </td> -->
+                            </tr>
+                        </tbody>
+                    </v-simple-table>
                 </v-card-text>
-
-                <v-card-actions>
-                <v-spacer></v-spacer>
-
-                <v-btn
-                    color="primary darken-1"
-                    text
-                    @click="deleteDialog = false"
-                >
-                    Отмена
-                </v-btn>
-
-                <v-btn
-                    color="error darken-1"
-                    @click="deleteGroup()"
-                >
-                    Да, удалить
-                </v-btn>
-                </v-card-actions>
             </v-card>
             </v-dialog>
 
@@ -329,6 +378,9 @@ export default {
         dialogAddBaseLine: false,
         dialogAddUserGroup: false,
         deleteDialog: false,
+        bondDialog: false,
+        bondDialogLoading: true,
+        groupName: '',
         baseLineName: '',
         baseLineNameRules: [
             v => !!v || 'Введите название',
@@ -338,7 +390,8 @@ export default {
             v => !!v || 'Введите название',
         ],
         userGroups: [],
-        error: ''
+        error: '',
+        bondsList: []
     }),
     async created() {
         this.baseLines = await this.$store.dispatch('fetchBaseLine')
@@ -347,6 +400,20 @@ export default {
         this.loading = false
     },
     methods: {
+        showBondsList(group) {
+            this.bondsList = []
+            this.groupName = group
+            this.$parent.$parent.bonds.filter(bond => {
+                group.bonds.forEach(item => {
+                    if(bond.isin == item) {
+                        this.bondsList.push(bond)
+                    }
+                })
+            })
+
+            this.bondDialog = true
+            this.bondDialogLoading = false
+        },
         editTypeLine(line) {
             this.$parent.$parent.editTypeLine(line)
         },

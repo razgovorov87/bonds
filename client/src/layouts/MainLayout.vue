@@ -54,6 +54,17 @@
           </v-list>
         </v-list-group>
 
+        <v-list-item
+          v-if="isAdmin"
+          link
+          disabled
+        >
+          <v-list-item-icon>
+                <v-icon>mdi-apps</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Админ-панель</v-list-item-title>
+        </v-list-item>
+
       </v-list>
     </v-navigation-drawer>
 
@@ -202,6 +213,9 @@ import BondsService from '../BondsService'
       },
       avatar() {
         return this.$store.getters.info.avatar
+      },
+      isAdmin() {
+            return this.$store.getters.info.isAdmin
       }
     },
     components: {

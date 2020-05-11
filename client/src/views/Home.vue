@@ -395,7 +395,7 @@
         :timeout="5000"
         :color="snackbarstatus"
         bottom
-        right
+        center
     >
     <v-icon
         v-if="snackbarstatus == 'success'"
@@ -422,6 +422,63 @@
         Закрыть
     </v-btn>
     </v-snackbar>
+
+     <v-dialog v-model="itemDialog" width="700">
+        <v-card>
+          <v-toolbar dark color="primary">
+            <v-btn icon dark @click="itemDialog = false">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+            <v-toolbar-title class="px-0">{{bond.name}}</v-toolbar-title>
+            <v-divider vertical inset class="mx-2"></v-divider>
+            <v-chip class="subtitle white black--text d-flex align-center"><span class="mr-1 grey--text">ISIN</span>{{bond.isin}}</v-chip>
+            <v-spacer></v-spacer>
+            <v-tooltip left v-if="isAdmin">
+              <template v-slot:activator="{ on }">
+                <v-btn v-on="on" fab color="white" small class="mx-2">
+                  <v-icon color="red">mdi-delete</v-icon>
+                </v-btn>
+              </template>
+              <span>Удалить {{bond.name}}</span>
+            </v-tooltip>
+          </v-toolbar>
+          <v-card-content>
+            <v-list dense>
+              <v-subheader>Основная информация</v-subheader>
+              <v-list-item>
+                <span v-if="bond.profit > 0" class="subtitle-2">Профит: <span  class="teal--text font-weight-bold ml-2">{{bond.profit}}%</span><v-icon size="20px" color="teal">mdi-arrow-up</v-icon></span>
+                <span v-if="bond.profit < 0" class="subtitle-2">Профит: <span  class="red--text font-weight-bold ml-2">{{bond.profit}}%</span><v-icon size="20px" color="red">mdi-arrow-down</v-icon></span>
+              </v-list-item>
+
+              <v-list-item>
+                <span class="subtitle-2">Дюрация: <span class="font-weight-bold ml-2">{{bond.duration}} лет</span></span>
+              </v-list-item>
+
+              <v-list-item>
+                <span class="subtitle-2">Последняя цена: <span class="font-weight-bold ml-2">{{bond.last_price}}</span></span>
+              </v-list-item>
+
+              <v-list-item>
+                <span class="subtitle-2">Лучший спрос: <span class="font-weight-bold ml-2">{{bond.best_spros}}</span></span>
+              </v-list-item>
+
+              <v-list-item>
+                <span class="subtitle-2">Лучший предложение: <span class="font-weight-bold ml-2">{{bond.best_predl}}</span></span>
+              </v-list-item>
+
+              <v-list-item>
+                <span class="subtitle-2">Оборот: <span class="font-weight-bold ml-2">{{bond.oborot}}</span></span>
+              </v-list-item>
+
+              <v-list-item>
+                <span class="subtitle-2">Тип: <v-chip class="white--text info font-weight-bold ml-2">{{bond.type}}</v-chip></span>
+              </v-list-item>
+
+              
+            </v-list>
+          </v-card-content>
+      </v-card>
+    </v-dialog>
   </v-row>    
 </template>
 
@@ -459,6 +516,7 @@ export default {
     ],
     settingsDrawer: false,
     dialogAddUserGroup: false,
+    itemDialog: false,
     userGroupName: '',
     profitRange: [4, 7],
     profitRangeMin: -5,
@@ -476,15 +534,8 @@ export default {
     snackbar: false,
     snackbarstatus: '',
     snackbarText: '',
-    bonds: [
-      {id: 1, isin: '789456123', name: 'Asd123', profit: 0.2, duration: 0.5},
-      {id: 2, isin: '123456', name: 'Asd123', profit: 0.3, duration: 0.3},
-      {id: 3, isin: '123', name: 'Asd123', profit: 0.74, duration: 0.4},
-      {id: 4, isin: '456', name: 'Asd123', profit: 0.35, duration: 0.54},
-      {id: 5, isin: '789', name: 'Asd123', profit: 0.23, duration: 0.3},
-      {id: 6, isin: '456123', name: 'Asd123', profit: 0.49, duration: 0.2},
-      {id: 7, isin: '71432', name: 'Asd123', profit: 0.85, duration: 0.1},
-    ],
+    bonds: [],
+    bond: [],
     filterIsin: '',
     filterName: '',
     typeItems: [
@@ -654,7 +705,9 @@ export default {
         })
       },
     selectScatter(item) {
+      this.showItemDialog(item)
       this.selected = []
+      
       if(this.selectPoint[0]) {
         this.selectPoint[0].setState('normal')
       }
@@ -678,6 +731,10 @@ export default {
       itemsArr.unshift(self)
       this.selected.push(self)
       this.items = itemsArr
+    },
+    showItemDialog(item) {
+      this.itemDialog = true
+      this.bond = item
     },
     showSnackbar() {
       if(this.$v.$invalid) {
@@ -1121,6 +1178,9 @@ export default {
       },
       groupsName() {
         return this.$store.getters.groups
+      },
+      isAdmin() {
+        return this.$store.getters.info.isAdmin
       }
   },
   components: {
