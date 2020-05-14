@@ -145,7 +145,7 @@
             <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" text @click="dialogAddBaseLine = false">Закрыть</v-btn>
-            <v-btn color="primary" @click="createBaseLine()">Создать</v-btn>
+            <v-btn color="primary font-weight-bold" @click="createBaseLine()">Создать</v-btn>
             </v-card-actions>
         </v-card>
         </v-dialog>
