@@ -433,14 +433,6 @@
             <v-divider vertical inset class="mx-2"></v-divider>
             <v-chip class="subtitle white black--text d-flex align-center"><span class="mr-1 grey--text">ISIN</span>{{bond.isin}}</v-chip>
             <v-spacer></v-spacer>
-            <v-tooltip left v-if="isAdmin">
-              <template v-slot:activator="{ on }">
-                <v-btn v-on="on" fab color="white" small class="mx-2">
-                  <v-icon color="red">mdi-delete</v-icon>
-                </v-btn>
-              </template>
-              <span>Удалить {{bond.name}}</span>
-            </v-tooltip>
           </v-toolbar>
           <v-card-content>
             <v-list dense>

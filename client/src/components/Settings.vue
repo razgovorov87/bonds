@@ -90,7 +90,7 @@
                     ></v-switch>
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
-                            <v-btn v-on="on" small color="info" @click="showBondsList(line)">
+                            <v-btn v-on="on" small color="info" @click="showBondsList(line, 'baseLine')">
                                 Облигации
                             </v-btn>
                         </template>
@@ -214,7 +214,7 @@
                     ></v-switch>
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
-                            <v-btn v-on="on" small color="info" @click="showBondsList(group)">
+                            <v-btn v-on="on" small color="info" @click="showBondsList(group, 'userGroup')">
                                 Облигации
                             </v-btn>
                         </template>
@@ -269,7 +269,7 @@
                 <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="dialogAddUserGroup = false">Закрыть</v-btn>
-                <v-btn color="primary" @click="createUserGroup()">Создать</v-btn>
+                <v-btn color="primary font-weight-bold" @click="createUserGroup()">Создать</v-btn>
                 </v-card-actions>
             </v-card>
             </v-dialog>
@@ -294,7 +294,7 @@
                     </v-btn>
 
                     <v-btn
-                        color="error darken-1"
+                        color="error darken-1 font-weight-bold"
                         @click="deleteGroup()"
                     >
                         Да, удалить
@@ -316,28 +316,34 @@
                     </v-btn>
                 </v-toolbar>
                 
-                <v-card-text>
-                    <v-skeleton-loader v-if="bondDialogLoading" type="table"></v-skeleton-loader>
-                    <v-simple-table v-else>
+                <v-card-text style="min-height: 300px">
+                    <div v-if="bondDialogLoading" class="d-flex justify-center align-center" style="height: 300px">
+                        <v-progress-circular
+                            :size="50"
+                            color="primary"
+                            indeterminate
+                        ></v-progress-circular>
+                    </div>
+                    <v-simple-table v-else width="100%">
                         <thead>
                             <th class="text-left">Название</th>
                             <th class="text-left">ISIN</th>
-                            <!-- <th class="text-left"></th> -->
+                            <th class="text-left"></th>
                         </thead>
                         <tbody>
                             <tr v-for="bond of bondsList" :key="bond.isin">
                                 <td>{{bond.name}}</td>
                                 <td>{{bond.isin}}</td>
-                                <!-- <td>
+                                <td>
                                     <v-tooltip right>
                                         <template v-slot:activator="{ on }">
-                                            <v-btn small icon v-on="on" @click="deleteBondOnList(bond.isin)">
+                                            <v-btn icon v-on="on" @click="deleteBondOnList(bond.isin)">
                                                 <v-icon class="red--text">mdi-delete</v-icon>
                                             </v-btn>
                                         </template>
                                         <span class="font-weight-bold">Удалить {{bond.name}}</span>
                                     </v-tooltip>
-                                </td> -->
+                                </td>
                             </tr>
                         </tbody>
                     </v-simple-table>
@@ -391,7 +397,8 @@ export default {
         ],
         userGroups: [],
         error: '',
-        bondsList: []
+        bondsList: [],
+        typeGroup: ''
     }),
     async created() {
         this.baseLines = await this.$store.dispatch('fetchBaseLine')
@@ -400,8 +407,9 @@ export default {
         this.loading = false
     },
     methods: {
-        showBondsList(group) {
+        showBondsList(group, type) {
             this.bondsList = []
+            this.typeGroup = type
             this.groupName = group
             this.$parent.$parent.bonds.filter(bond => {
                 group.bonds.forEach(item => {
@@ -412,6 +420,33 @@ export default {
             })
 
             this.bondDialog = true
+            this.bondDialogLoading = false
+        },
+        async deleteBondOnList(bond) {
+            if( !this.isAdmin ) {
+                this.$parent.$parent.snackbar = true
+                this.$parent.$parent.snackbarstatus = 'error'
+                this.$parent.$parent.snackbarText = 'Вы не можете удалить данные элементы'
+                return
+            }
+            this.bondDialogLoading = true
+            this.bondsList = []
+            const group = this.groupName
+            const index = group.bonds.findIndex(item => item == bond)
+            group.bonds.splice(index, 1)
+            if( this.typeGroup === 'userGroup') {
+                await this.$store.dispatch('deleteUserBondOnList', {group})
+            }
+            if( this.typeGroup === 'baseLine') {
+                await this.$store.dispatch('deleteBaseBondOnList', {group, bond})
+            }
+            this.$parent.$parent.bonds.filter(bond => {
+                group.bonds.forEach(item => {
+                   if(bond.isin == item) {
+                        this.bondsList.push(bond)
+                    }
+                })
+            })
             this.bondDialogLoading = false
         },
         editTypeLine(line) {

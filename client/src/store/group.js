@@ -25,6 +25,12 @@ export default {
                 return groupData
             } catch (e) {throw e}
         },
+        async fetchBaseLineData({dispatch}, group) {
+            try {
+                const groupData = (await firebase.database().ref(`/baseline/${group.name}`).once('value')).val()
+                return groupData
+            } catch (e) {throw e}
+        },
         async fetchUserGroupDublicate({dispatch}, groupName) {
             try {
                 const uid = await dispatch('getUid')
@@ -63,12 +69,24 @@ export default {
                 await firebase.database().ref(`/baseline/${line.name}`).remove()
             } catch (e) {throw e}
         },
-        async deleteUserBondOnList({dispatch}, {group, bond}) {
+        async deleteUserBondOnList({dispatch}, {group}) {
             try {
                 const uid = await dispatch('getUid')
-                const line = (await firebase.database().ref(`/users/${uid}/groups/${group.name}/bonds/`).once('value')).val()
-                const index = line.findIndex(item => item == bond)
-                await firebase.database().ref(`/users/${uid}/groups/${group.name}/bonds/${index}`).remove()
+                await firebase.database().ref(`/users/${uid}/groups/${group.name}`).remove()
+                await firebase.database().ref(`/users/${uid}/groups/${group.name}`).set({
+                    'name': group.name,
+                    'bonds': group.bonds
+                })
+
+            } catch (e) {throw e}
+        },
+        async deleteBaseBondOnList({dispatch}, {group}) {
+            try {
+                await firebase.database().ref(`/baseline/${group.name}`).remove()
+                await firebase.database().ref(`/baseline/${group.name}`).set({
+                    'name': group.name,
+                    'bonds': group.bonds
+                })
             } catch (e) {throw e}
         },
     }
