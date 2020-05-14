@@ -16,10 +16,10 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "mongodb": "^3.5.6",
+    "mongodb": "^3.5.7",
     "start": "^5.1.0",
     "vue-dialog-drag": "^0.1.29",
-    "vuesax": "^4.0.1-alpha.16"
+    "vuesax": "^4.0.1-alpha.18"
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
