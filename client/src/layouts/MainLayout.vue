@@ -57,7 +57,7 @@
         <v-list-item
           v-if="isAdmin"
           link
-          disabled
+          to="/admin"
         >
           <v-list-item-icon>
                 <v-icon>mdi-apps</v-icon>
@@ -78,7 +78,8 @@
       <v-app-bar-nav-icon
         @click.stop="drawer = !drawer"
       ></v-app-bar-nav-icon> 
-      <v-toolbar-title class="font-weight-bold">BONDS</v-toolbar-title>
+      <!-- <v-toolbar-title class="font-weight-bold">BONDS</v-toolbar-title> -->
+      <v-btn class="title font-weight-bold white--text" text href="/">Bonds</v-btn>
 
       <v-spacer></v-spacer>
 

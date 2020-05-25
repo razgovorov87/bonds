@@ -1,19 +1,7 @@
 <template>
   <v-row>
 
-    <v-overlay opacity="0.6" :value="loadingOverlay">
-      <div class="d-flex justify-center align-center">
-
-        <v-progress-circular
-          :size="50"
-          color="primary"
-          indeterminate
-          class="mr-3"
-        ></v-progress-circular>
-        <span>{{loadingText}}</span>
-
-      </div>
-    </v-overlay>
+    <Loader v-if="loadingOverlay" :text="loadingText" />
 
     
     <v-navigation-drawer
@@ -475,6 +463,7 @@
 </template>
 
 <script>
+import Loader from '@/components/Loader'
 import BondsService from '../BondsService'
 import Settings from '@/components/Settings'
 import {Chart} from 'highcharts-vue'
@@ -1177,7 +1166,8 @@ export default {
   },
   components: {
     highcharts: Chart,
-    Settings
+    Settings,
+    Loader
   }
 }
 </script>

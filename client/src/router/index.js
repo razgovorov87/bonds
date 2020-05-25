@@ -27,6 +27,12 @@ Vue.use(VueRouter)
     name: 'Заблокировать',
     meta: {layout: 'auth'},
     component: () => import('../views/LockScreen.vue')
+  },
+  {
+    path: '/admin',
+    name: 'Админ-панель',
+    meta: {layout: 'main'},
+    component: () => import('../views/Admin.vue')
   }
 ]
 

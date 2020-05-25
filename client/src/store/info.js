@@ -18,9 +18,23 @@ export default {
             const uid = await dispatch('getUid')
             const info = (await firebase.database().ref(`/users/${uid}/info`).once('value')).val()
             commit('setInfo', info)
-           } catch (e) {
-               
-           }
+           } catch (e) {}
+        },
+        async fetchUserList({dispatch}) {
+            try {
+                const userList = (await firebase.database().ref(`/users/`).once('value')).val()
+                return Object.keys(userList).map(user => ({...userList[user], id: user}))
+            } catch (e) {}
+        },
+        async getUserRules({dispatch}, {item, rules}) {
+            try {
+                if( rules == 'admin') {
+                    const user = (await firebase.database().ref(`/users/${item.id}/`).once('value')).val()
+                    await firebase.database().ref(`/users/${item.id}/info/`).update({
+                        isAdmin: !user.info.isAdmin
+                    })
+                }
+            } catch (e) {throw e}
         }
     },
     getters: {
