@@ -90,7 +90,7 @@
                     ></v-switch>
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
-                            <v-btn v-on="on" small color="info" @click="showBondsList(line, 'baseLine')">
+                            <v-btn v-on="on" small @click="showBondsList(line, 'baseLine')">
                                 Облигации
                             </v-btn>
                         </template>
@@ -214,7 +214,7 @@
                     ></v-switch>
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
-                            <v-btn v-on="on" small color="info" @click="showBondsList(group, 'userGroup')">
+                            <v-btn v-on="on" small @click="showBondsList(group, 'userGroup')">
                                 Облигации
                             </v-btn>
                         </template>
