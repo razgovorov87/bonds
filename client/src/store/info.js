@@ -23,7 +23,7 @@ export default {
         async fetchUserList({dispatch}) {
             try {
                 const userList = (await firebase.database().ref(`/users/`).once('value')).val()
-                return Object.keys(userList).map(user => ({...userList[user], id: user}))
+                return Object.keys(userList).map(user => ({...userList[user], groups: userList[user].groups, id: user}))
             } catch (e) {}
         },
         async getUserRules({dispatch}, {item, rules}) {

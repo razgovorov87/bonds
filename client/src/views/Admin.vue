@@ -28,7 +28,7 @@
                             :close-on-content-click="false"
                         >
                             <template v-slot:activator="{ on }">
-                                <v-chip small label class="font-weight-bold subtitle-1 grey lighten-4" v-on="on">+</v-chip>
+                                <v-chip small label class="font-weight-bold subtitle-1 grey lighten-4" v-on="on"><v-icon small>mdi-pencil</v-icon></v-chip>
                             </template>
                             <v-list dense>
                                 <v-list-item disabled link class="grey lighten-3" @click="toggleRules(item, 'standart')">
@@ -41,6 +41,16 @@
                                 </v-list-item>
                             </v-list>
                         </v-menu>
+                    </template>
+
+                    <template v-slot:item.groups="{ item }">
+                        <v-tooltip v-if="item.groups" right>
+                            <template v-slot:activator="{ on }">
+                                <v-btn disabled outlined small class="font-weight-bold" color="primary" v-on="on">{{Object.keys(item.groups).length}}</v-btn>
+                            </template>
+                            <span>Открыть список</span>
+                        </v-tooltip>
+                        <v-icon v-else color="error">mdi-close</v-icon>
                     </template>
 
                 </v-data-table>
@@ -62,7 +72,8 @@ export default {
             {text: '', value: 'avatar', sortable: false, width: '50px', align: 'center'},
             {text: 'Имя', value: 'name'},
             {text: 'Email', value: 'email'},
-            {text: 'Права', value: 'admin'}
+            {text: 'Права', value: 'admin'},
+            {text: 'Кол-во групп', value: 'groups', align: 'center'}
         ],
         usersTableItems: [],
         loading: true,
@@ -78,10 +89,10 @@ export default {
                 name: user.info.name,
                 email: user.info.email,
                 admin: user.info.isAdmin,
-                id: user.id
+                id: user.id,
+                groups: user.groups
             })
         })
-
         this.loading = false
     },
     methods: {
