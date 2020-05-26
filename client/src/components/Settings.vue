@@ -335,7 +335,7 @@
                                 <td>{{bond.name}}</td>
                                 <td>{{bond.isin}}</td>
                                 <td>
-                                    <v-tooltip right>
+                                    <v-tooltip v-if="isAdmin" right>
                                         <template v-slot:activator="{ on }">
                                             <v-btn icon v-on="on" @click="deleteBondOnList(bond.isin)">
                                                 <v-icon class="red--text">mdi-delete</v-icon>

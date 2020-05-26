@@ -77,8 +77,7 @@
     >
       <v-app-bar-nav-icon
         @click.stop="drawer = !drawer"
-      ></v-app-bar-nav-icon> 
-      <!-- <v-toolbar-title class="font-weight-bold">BONDS</v-toolbar-title> -->
+      ></v-app-bar-nav-icon>
       <v-btn class="title font-weight-bold white--text" text href="/">Bonds</v-btn>
 
       <v-spacer></v-spacer>
@@ -86,6 +85,7 @@
       <v-btn
         @click="resetZoom()"
         class="mr-2"
+        :disabled="disableButton"
       >
         <v-icon
           class="mr-2"
@@ -114,6 +114,7 @@
         v-else
         @click="refreshPage()"
         class="mr-2"
+        :disabled="disableButton"
       >
         <v-icon
           class="mr-2"
@@ -125,6 +126,7 @@
 
       <v-btn
         @click.stop="settingsDrawerShow()"
+        :disabled="disableButton"
       >
         <v-icon class="mr-2">mdi-cog-outline</v-icon>
         Построения
@@ -216,7 +218,14 @@ import BondsService from '../BondsService'
         return this.$store.getters.info.avatar
       },
       isAdmin() {
-            return this.$store.getters.info.isAdmin
+        return this.$store.getters.info.isAdmin
+      },
+      disableButton() {
+        if (this.$route.path == '/admin') {
+          return true
+        } else {
+          return false
+        }
       }
     },
     components: {
