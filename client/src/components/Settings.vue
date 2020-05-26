@@ -91,7 +91,7 @@
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
                             <v-btn v-on="on" small @click="showBondsList(line, 'baseLine')">
-                                Облигации
+                                Список
                             </v-btn>
                         </template>
                         <span>Показать список</span>
@@ -215,7 +215,7 @@
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
                             <v-btn v-on="on" small @click="showBondsList(group, 'userGroup')">
-                                Облигации
+                                Список
                             </v-btn>
                         </template>
                         <span>Показать список</span>
@@ -367,10 +367,6 @@
     font-size: 20px;
 }
 </style>
-
-
-<script src="https://unpkg.com/vue/dist/vue.js"></script>
-<script src="https://unpkg.com/vuesax"></script>
 
 <script>
 import {required} from 'vuelidate/lib/validators'

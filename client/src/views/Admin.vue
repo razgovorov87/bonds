@@ -12,10 +12,10 @@
                     </template>
 
                     <template v-slot:item.avatar="{ item }">
-                        <v-avatar v-if="item.avatar" size="40" color="primary">
+                        <v-avatar tile v-if="item.avatar" size="40" color="primary" id="user__avatar">
                             <v-img :src="item.avatar"></v-img>
                         </v-avatar>
-                        <v-avatar v-else class="white--text" size="40" color="primary">
+                        <v-avatar tile v-else class="white--text" size="40" color="primary" id="user__avatar">
                            {{item.name[0].toUpperCase()}}
                         </v-avatar>
                     </template>
@@ -50,7 +50,7 @@
                             </template>
                             <span>Открыть список</span>
                         </v-tooltip>
-                        <v-icon v-else color="error">mdi-close</v-icon>
+                        <v-btn v-else disabled outlined small class="font-weight-bold" color="primary">0</v-btn>
                     </template>
 
                 </v-data-table>
@@ -59,12 +59,23 @@
 
         <v-col cols="4">
             <v-card>
+                <v-card-title>Последние обновления</v-card-title>
+                <v-card-text class="pl-0">
+                    <AdminTimeline />
+                </v-card-text>
             </v-card>
         </v-col>
     </v-row>
 </template>
 
+<style>
+#user__avatar {
+    border-radius: 10px;
+}
+</style>
+
 <script>
+import AdminTimeline from '@/components/AdminTimeline'
 import Loader from '@/components/Loader'
 export default {
     data: () => ({
@@ -119,7 +130,8 @@ export default {
     computed: {
     },
     components: {
-        Loader
+        Loader,
+        AdminTimeline
     }
 }
 </script>

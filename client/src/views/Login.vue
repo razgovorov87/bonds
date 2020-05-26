@@ -36,15 +36,34 @@
                 </v-btn>
             </div>
         </form>
+        <v-snackbar
+        v-model="snackbar"
+        :timeout="5000"
+        bottom
+        left
+        color="error"
+        >
+            {{ snackbarText }}
+            <v-btn
+                class="font-weight-bold white--text"
+                text
+                @click="snackbar = false"
+            >
+                Закрыть
+            </v-btn>
+        </v-snackbar>
     </div>   
 </template>
 
 <script>
+import error from '@/error'
 import {email, required, minLength} from 'vuelidate/lib/validators'
 export default {
     name: 'Login',
     data: () => ({
         show: false,
+        snackbar: false,
+        snackbarText: '',
         email: '',
         emailRules: [
             v => !!v || 'Введите Email',
@@ -74,7 +93,13 @@ export default {
             try {
                 await this.$store.dispatch('login', formData)
                 this.$router.push('/')
-            } catch (e) {}
+            } catch (e) {
+                this.snackbar = false
+                this.snackbar = true
+                if( error[e.code] ) {
+                    this.snackbarText = error[e.code]
+                } else this.snackbarText = 'Что-то пошло не так!'
+            }
         }
     },
     created () {
