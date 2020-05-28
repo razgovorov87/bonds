@@ -2,7 +2,7 @@
 
     <Loader v-if="loading" text="Загружаем данные..." />
     <v-row v-else>
-        <v-col cols="8">
+        <v-col cols="7">
             <v-card>
                 <v-card-title>Список пользователей</v-card-title>
                 <v-data-table :headers="usersTableHeaders" :items="usersTableItems" :loading="loadingTable" loading-text="Получаем список пользователей..." :item-key="usersTableItems.email" hide-default-footer>
@@ -57,7 +57,7 @@
             </v-card>
         </v-col>
 
-        <v-col cols="4">
+        <v-col cols="5">
             <v-card>
                 <v-card-title>Последние обновления</v-card-title>
                 <v-card-text class="pl-0">

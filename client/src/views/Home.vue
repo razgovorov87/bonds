@@ -569,7 +569,7 @@ export default {
         this.getMinValue()
         this.oborotRange = [this.oborotRangeMin, this.oborotRangeMax]
       }, 0)
-      this.items = this.bonds
+      this.items = this.bonds.sort((a, b) => a.name.localeCompare(b.name))
       this.filterData()
       this.getEmitentItems()
       this.getSectorItems()
@@ -830,6 +830,7 @@ export default {
           y: bond.profit
         })
       })
+      this.scatters.sort((a, b) => a.x - b.x)
       setTimeout(() => {
         this.chart.series[0].setData(this.scatters)
       }, 0)
