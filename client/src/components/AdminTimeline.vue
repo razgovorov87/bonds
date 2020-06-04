@@ -56,7 +56,7 @@ export default {
         item: {}
     }),
     mounted() {
-        this.logList = Object.keys(changelog).map(log => ({...changelog[log], version: log}))
+        this.logList = Object.keys(changelog).map(log => ({...changelog[log], version: log})).reverse()
         this.loading = false
     },
     methods: {

@@ -451,8 +451,37 @@
               </v-list-item>
 
               <v-list-item>
-                <span class="subtitle-2">Тип: <v-chip class="white--text info font-weight-bold ml-2">{{bond.type}}</v-chip></span>
+                <span class="subtitle-2">Тип: <span class="font-weight-bold ml-2">{{bond.type}}</span></span>
               </v-list-item>
+
+             <v-expansion-panels focusable hover v-if="bond.emitent">
+                <v-expansion-panel>
+                  <v-expansion-panel-header class="subtitle-2 pl-4">Эмитент</v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-list dense>
+                      <v-list-item>
+                        <span class="subtitle-2">Полное название: <span class="font-weight-bold ml-2">{{bond.emitent.fullname}}</span></span>
+                      </v-list-item>
+
+                      <v-list-item>
+                        <span class="subtitle-2">Краткое название: <span class="font-weight-bold ml-2">{{bond.emitent.shortName}}</span></span>
+                      </v-list-item>
+
+                      <v-list-item>
+                        <span class="subtitle-2">Сектор: <span class="font-weight-bold ml-2">{{bond.emitent.sector}}</span></span>
+                      </v-list-item>
+
+                      <v-list-item>
+                        <span class="subtitle-2">Тип компании: <span class="font-weight-bold ml-2">{{bond.emitent.company_type}}</span></span>
+                      </v-list-item>
+
+                      <v-list-item>
+                        <span class="subtitle-2">ИНН: <span class="font-weight-bold ml-2">{{bond.emitent.inn}}</span></span>
+                      </v-list-item>
+                    </v-list>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+             </v-expansion-panels>
 
               
             </v-list>
