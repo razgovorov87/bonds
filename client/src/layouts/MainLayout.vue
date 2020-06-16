@@ -1,9 +1,10 @@
 <template>
-  <v-app id="inspire">
+  <Loader v-if="loading" />
+  <v-app  v-else id="inspire">
     <v-navigation-drawer
       :mini-variant.sync="drawer"
       app
-      color="rgb(6,8,24)"
+      :color="theme === 'light' ? '#060818' : '#282c3d'"
       dark
       clipped
     >
@@ -71,20 +72,24 @@
     <v-app-bar
       app
       dark
-      color="rgb(6,8,24)"
+      :color="theme === 'light' ? '#060818' : '#282c3d'"
       clipped-left
       dense
     >
       <v-app-bar-nav-icon
         @click.stop="drawer = !drawer"
       ></v-app-bar-nav-icon>
-      <v-btn class="title font-weight-bold white--text" text href="/">Bonds</v-btn>
+      <div class="d-flex align-center appbar__title">
+        <v-btn class="title font-weight-bold white--text mr-3" text href="/">Bonds</v-btn>
+        <v-switch v-model="dark" @change="changeTheme" inset append-icon="mdi-weather-night" prepend-icon="mdi-weather-sunny" color="white"></v-switch>
+      </div>
 
       <v-spacer></v-spacer>
 
       <v-btn
         @click="resetZoom()"
-        class="mr-2"
+        class="mr-2 elevation-0"
+        :color="theme === 'light' ? '#060818' : '#222533'"
         :disabled="disableButton"
       >
         <v-icon
@@ -113,7 +118,8 @@
       <v-btn
         v-else
         @click="refreshPage()"
-        class="mr-2"
+        class="mr-2 elevation-0"
+        :color="theme === 'light' ? '#060818' : '#222533'"
         :disabled="disableButton"
       >
         <v-icon
@@ -126,6 +132,8 @@
 
       <v-btn
         @click.stop="settingsDrawerShow()"
+        :color="theme === 'light' ? '#060818' : '#222533'"
+        class="elevation-0"
         :disabled="disableButton"
       >
         <v-icon class="mr-2">mdi-cog-outline</v-icon>
@@ -136,6 +144,7 @@
     <v-content>
       <v-container
         class="fill-height d-flex align-start content__wrapper"
+        :class="[dark ? 'dark' : 'light']"
         fluid
       >
           <router-view ref="childComponent" />
@@ -149,12 +158,22 @@
 html {
   overflow-y: auto;
 }
-.content__wrapper {
+.content__wrapper.light {
   background-color: #eff0f1;
+}
+.content__wrapper.dark {
+  background-color: #444c67;
+}
+.appbar__title .v-input__slot {margin-bottom: 0;}
+.appbar__title .v-input__control {
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: inherit;
 }
 </style>
 
 <script>
+import Loader from '@/components/Loader'
 import Home from '@/views/Home'
 import BondsService from '../BondsService'
   export default {
@@ -162,22 +181,41 @@ import BondsService from '../BondsService'
       drawer: true,
       timerDisplay: false,      
       currentTime: 59,
-      timer: null
+      timer: null,
+      dark: false,
+      loading: true
     }),
-    created () {
-      this.$vuetify.theme.dark = false
+    async created() {
+      if (!Object.keys(this.$store.getters.info).length) {
+        await this.$store.dispatch('fetchInfo')
+      }
+      const info = this.$store.getters.info.defaultTheme
+      if(info === 'dark') {
+        this.dark = true
+        this.$vuetify.theme.dark = true
+      } else {
+        this.dark = false
+        this.$vuetify.theme.dark = false
+      }
+      
+
+      this.loading = false
     },
     async mounted() {
       const uid = await this.$store.dispatch('getUid')
       if( !uid ) {
         this.$router.push('/login')
       }
-
-      if (!Object.keys(this.$store.getters.info).length) {
-        await this.$store.dispatch('fetchInfo')
-      }
     },
     methods: {
+      async changeTheme() {
+        if(this.dark) {
+          this.$vuetify.theme.dark = true
+        } else {
+          this.$vuetify.theme.dark = false
+        }
+        await this.$store.dispatch('userChangeTheme', this.dark)
+      },
       settingsDrawerShow() {
         this.$refs.childComponent.settingsDrawer = !this.$refs.childComponent.settingsDrawer
       },
@@ -214,6 +252,9 @@ import BondsService from '../BondsService'
       name() {
         return this.$store.getters.info.name
       },
+      theme() {
+        return this.$vuetify.theme.dark ? "dark" : "light";
+      },
       avatar() {
         return this.$store.getters.info.avatar
       },
@@ -229,7 +270,8 @@ import BondsService from '../BondsService'
       }
     },
     components: {
-      'child-component': Home
+      'child-component': Home,
+      Loader
     }
   }
 </script>

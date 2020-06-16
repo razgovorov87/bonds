@@ -2,12 +2,14 @@ import firebase, { registerVersion } from 'firebase/app'
 
 export default {
     actions: {
-        async createUserGroup({dispatch}, {name, bonds}) {
+        async createUserGroup({dispatch}, {name, bonds, color}) {
             try {
                 const uid = await dispatch('getUid')
                 await firebase.database().ref(`/users/${uid}/groups/${name}`).set({
                     name,
-                    bonds
+                    bonds,
+                    color,
+                    id: `ug${(~~(Math.random()*1e8)).toString(16)}`
                 })
             } catch (e) {throw e}
         },
@@ -44,11 +46,13 @@ export default {
                 await firebase.database().ref(`/users/${uid}/groups/${group.name}`).remove()
             } catch (e) {throw e}
         },
-        async createBaseLine({dispatch}, {name, bonds}) {
+        async createBaseLine({dispatch}, {name, bonds, color}) {
             try {
                 await firebase.database().ref(`/baseline/${name}`).set({
                     name,
-                    bonds
+                    bonds,
+                    color,
+                    id: `b${(~~(Math.random()*1e8)).toString(16)}`
                 })
             } catch (e) {throw e}
         },

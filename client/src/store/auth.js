@@ -17,7 +17,8 @@ export default {
                     avatar: '',
                     isAdmin: 0,
                     name,
-                    email
+                    email,
+                    defaultTheme: 'light'
                 })
              } catch (e) {
                  throw e

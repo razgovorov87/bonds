@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-list-item
-            dark
+        dark
         >
             <v-list-item-title class="headline">Построения</v-list-item-title>
             <v-spacer></v-spacer>
@@ -23,6 +23,7 @@
             v-else
             dark
             class="mt-2"
+            id="settings__list"
         >
         
         <v-subheader>БАЗОВЫЕ ГРУППЫ</v-subheader>
@@ -36,7 +37,10 @@
         <v-list-item v-else v-for="line in baseLines" :key="line.name" class="mb-2" two-line>
             <v-card class="d-flex px-2 flex-column" style="width: 100%">
                 <div class="d-flex align-center justify-space-between" style="width: 100%">
-                    <v-list-item>{{line.name}}</v-list-item>
+                    <v-list-item>
+                        {{line.name}} 
+                        <LineColor :ref="line.id + '_color'" :line="line"/>
+                    </v-list-item>
                     <div class="d-flex">
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on }">
@@ -160,7 +164,10 @@
             <v-list-item v-else v-for="group in userGroups" :key="group.name" class="mb-2">
             <v-card class="d-flex flex-column px-2" style="width: 100%">
                 <div class="d-flex align-center justify-space-between" style="width: 100%">
-                    <v-list-item>{{group.name}}</v-list-item>
+                    <v-list-item>
+                        {{group.name}} 
+                        <LineColor :ref="group.id + '_color'" :line="group"/>
+                    </v-list-item>
                         <div class="d-flex">
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on }">
@@ -366,13 +373,18 @@
 .v-input__append-outer .v-input__icon--append i::before {
     font-size: 20px;
 }
+#settings__list {
+    background-color: #060818 !important;
+}
 </style>
 
 <script>
+import LineColor from '@/components/Home/LineColor'
 import {required} from 'vuelidate/lib/validators'
 export default {
     data: () => ({
         loading: true,
+        lineColor: '',
         typeLine: [],
         baseLines: [],
         deletableTypeGroup: '',
@@ -474,7 +486,9 @@ export default {
             this.loading = false
         },
         createLine(line) {
-            this.$parent.$parent.chartsCreateLine(line, this.typeLine)
+            console.log(line)
+            const color = this.$refs[line.id + '_color'][0].lineColor
+            this.$parent.$parent.chartsCreateLine(line, color, this.typeLine)
         },
         deleteLine(line) {
             this.$parent.$parent.chartsDeleteLine(line)
@@ -485,7 +499,9 @@ export default {
             this.deletebleUserGroup = ''
         },
         createUserGroupLine(group) {
-            this.$parent.$parent.chartsCreateLine(group, this.typeLine)
+            console.log(group)
+            const color = this.$refs[group.id + '_color'][0].lineColor
+            this.$parent.$parent.chartsCreateLine(group, color, this.typeLine)
         },
         deleteUserGroupLine(group) {
             this.$parent.$parent.chartsDeleteLine(group)
@@ -533,5 +549,8 @@ export default {
             return this.$store.getters.info.isAdmin
         }
     },
+    components: {
+        LineColor
+    }
 }
 </script>

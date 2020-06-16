@@ -35,6 +35,14 @@ export default {
                     })
                 }
             } catch (e) {throw e}
+        },
+        async userChangeTheme({dispatch}, dark) {
+            try {
+                const uid = await dispatch('getUid')
+                await firebase.database().ref(`/users/${uid}/info`).update({
+                    defaultTheme: dark === true ? 'dark' : 'light'
+                })
+            } catch (e) {throw e}
         }
     },
     getters: {
