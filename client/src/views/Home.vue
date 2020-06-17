@@ -522,7 +522,7 @@ export default {
           this.items = newArr
           this.filterData(this.items)
           if(!this.realTimeTrigger) clearInterval(interval)
-        }, 2000)
+        }, 60000)
       } else {
         return
       }
