@@ -82,6 +82,11 @@
       <div class="d-flex align-center appbar__title">
         <v-btn class="title font-weight-bold white--text mr-3" text href="/">Bonds</v-btn>
         <v-switch v-model="dark" @change="changeTheme" inset append-icon="mdi-weather-night" prepend-icon="mdi-weather-sunny" color="white"></v-switch>
+        <v-divider vertical class="mx-5"></v-divider>
+        <v-chip label :color="realTime ? 'success' : ''">
+          <v-switch v-model="realTime" color="white" @change="updateRealTime"></v-switch>
+          Обновление данных в реальном времени
+        </v-chip>
       </div>
 
       <v-spacer></v-spacer>
@@ -183,7 +188,8 @@ import BondsService from '../BondsService'
       currentTime: 59,
       timer: null,
       dark: false,
-      loading: true
+      loading: true,
+      realTime: false
     }),
     async created() {
       if (!Object.keys(this.$store.getters.info).length) {
@@ -246,6 +252,9 @@ import BondsService from '../BondsService'
       },
       resetZoom() {
         this.$refs.childComponent.resetZoom()
+      },
+      updateRealTime() {
+        this.$refs.childComponent.realTimeTrigger = this.realTime
       }
     },
     computed: {

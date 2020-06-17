@@ -35,7 +35,7 @@
                 <v-card elevation="0">
                   <v-row>
                     <v-col cols="12">
-                      <v-form @submit.prevent="filterData()" style="min-width: 100%">
+                      <v-form @submit.prevent="filterData(bonds)" style="min-width: 100%">
                         <v-row align="center" justify="space-between">
                           <v-row justify="center" style="width: 100%">
                             <v-col cols="2">
@@ -366,8 +366,8 @@ export default {
       { text: "Доходность", value: "profit" },
       { text: "Дюрация", value: "duration" },
       { text: "Цена послед.", value: "last_price" },
-      { text: "Лучший спрос", value: "best_spros" },
-      { text: "Лучшее предл.", value: "best_predl" },
+      { text: "Cпрос", value: "bid" },
+      { text: "Предложение", value: "ask" },
       { text: "Оборот", value: "oborot" },
       { text: "Тип", value: "type", width: "243px" },
       { text: "Эмитент", value: "emitent.shortName", width: "240px" },
@@ -380,7 +380,9 @@ export default {
     error: "",
     selectPoint: [],
     chartOptions: {},
-    refreshChart: 0
+    refreshChart: 0,
+    realTimeTrigger: false,
+    realTimeLoading: false
   }),
   async created() {
     try {
@@ -394,8 +396,8 @@ export default {
         this.getMinValue();
         this.oborotRange = [this.oborotRangeMin, this.oborotRangeMax];
       }, 0);
-      this.items = this.bonds.sort((a, b) => a.name.localeCompare(b.name));
-      this.filterData();
+      this.items = this.bonds
+      this.filterData(this.bonds);
       this.getEmitentItems();
       this.getSectorItems();
       const bg = this.theme === "dark" ? "#282c3d" : "#fff";
@@ -513,6 +515,18 @@ export default {
     }
   },
   watch: {
+    realTimeTrigger: async function() {
+      if(this.realTimeTrigger) {
+        const interval = setInterval( async () => {
+          const newArr = await BondsService.RealTime(this.items)
+          this.items = newArr
+          this.filterData(this.items)
+          if(!this.realTimeTrigger) clearInterval(interval)
+        }, 2000)
+      } else {
+        return
+      }
+    },
     theme: function() {
       const bg = this.theme === "dark" ? "#282c3d" : "#fff";
       this.chartOptions.chart.backgroundColor = bg;
@@ -661,7 +675,7 @@ export default {
       this.loadingOverlay = true;
       this.loadingText = "Обновляем данные...";
       this.bonds = await BondsService.getBonds();
-      this.filterData();
+      this.filterData(this.bonds);
       this.loading = false;
       this.loadingOverlay = false;
       // setTimeout(() => {
@@ -706,11 +720,9 @@ export default {
 
       return sortedData;
     },
-    async filterData() {
-      this.loadingOverlay = true;
-      this.loadingText = "Фильтруем данные...";
+    async filterData(bonds) {
       const typesName = this.typeValue;
-      const filtered = this.bonds.filter(function(bond) {
+      const filtered = bonds.filter(function(bond) {
         switch (bond.type) {
           case typesName[0]:
             return bond;
@@ -739,7 +751,7 @@ export default {
         }
       });
 
-      let finalArr = filtered;
+      let finalArr = filtered.sort((a, b) => a.name.localeCompare(b.name));
       if (this.filterIsin) {
         const isin = this.filterIsin.toUpperCase();
         finalArr = finalArr.filter(item => {
@@ -817,7 +829,7 @@ export default {
       this.oborotRange = [this.oborotRangeMin, this.oborotRangeMax];
       this.typeValue = this.typeItems;
       this.items = this.bonds;
-      this.filterData();
+      this.filterData(this.bonds);
     },
     editMarkerLine(line, marker) {
       const idx = this.chart.series.findIndex(item => item.name == line.name)
