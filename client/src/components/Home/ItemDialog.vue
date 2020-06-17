@@ -3,10 +3,11 @@
     <DialogDrag
       v-for="dialog in dialogs"
       :key="dialog.id"
+      :id="dialog.id"
       class="dialog-1 item__dialog"
       :options="dialog.options"
     >
-      <v-card>
+      <v-card @click="selectDialog(dialog)" :ripple="false">
         <v-toolbar dark color="primary">
           <v-btn icon dark @click="removeDialog(dialog)">
             <v-icon>mdi-close</v-icon>
@@ -141,6 +142,12 @@ export default {
     dialogs: []
   }),
   methods: {
+    selectDialog(dialog) {
+      const allItems = document.querySelectorAll('.dialog-drag')
+      const selected = document.querySelector(`#${dialog.id}`)
+      allItems.forEach(item => item.style.zIndex = 900)
+      selected.style.zIndex = 999
+    },
     removeDialog(dialog) {
       const dialogIdx = this.dialogs.findIndex(item => item.id == dialog.id)
       this.dialogs.splice(dialogIdx, 1)
@@ -158,7 +165,7 @@ export default {
 
 <style>
 .item__dialog {
-  min-width: 700px !important;
+  min-width: 550px !important;
 }
 .v-list {
   padding-bottom: 0;

@@ -541,7 +541,6 @@ export default {
       );
       this.selectPoint.push(this.chart.series[0].data[idx]);
       this.selectPoint.forEach(item => item.setState("hover"));
-      this.$vuetify.goTo(0);
       const itemsArr = this.items.filter(elem => {
         if (elem.isin !== item.isin) {
           return elem;
@@ -552,8 +551,8 @@ export default {
       this.items = itemsArr;
     },
     showItemDialog(item) {
-      const left = Math.floor(1000 * Math.random());
-      const top = Math.floor(500 * Math.random());
+      const left = Math.floor(1135 * Math.random());
+      const top = Math.floor(440 * Math.random());
       const check = this.$refs.ItemDialog.dialogs.findIndex(
         dialog => dialog.id === item.isin
       );
@@ -820,6 +819,33 @@ export default {
       this.items = this.bonds;
       this.filterData();
     },
+    editMarkerLine(line, marker) {
+      const idx = this.chart.series.findIndex(item => item.name == line.name)
+
+      if (idx == -1) {
+        return
+      }
+
+      const color = this.chart.series[idx].color;
+      let typeLine = this.chart.series[idx].type;
+      const seriesData = this.getLine(line);
+      const series = {
+        type: typeLine,
+        name: line.name,
+        color: color,
+        lineWidth: 3,
+        marker: {
+          lineColor: color,
+          radius: 6,
+          symbol: marker
+        },
+        stickyTracking: false,
+        data: seriesData
+      };
+
+      this.chartsDeleteLine(line);
+      this.chart.addSeries(series);
+    },
     editColorLine(line, color) {
       const idx = this.chart.series.findIndex(item => item.name == line.name)
 
@@ -882,7 +908,7 @@ export default {
       this.chartsDeleteLine(line);
       this.chart.addSeries(series);
     },
-    chartsCreateLine(line, color, arr) {
+    chartsCreateLine(line, color, marker, arr) {
       const seriesData = this.getLine(line);
       const seriesIndex = this.chart.series.findIndex(
         item => item.name == line.name
@@ -915,7 +941,8 @@ export default {
         lineWidth: 3,
         marker: {
           lineColor: color,
-          radius: 6
+          radius: 6,
+          symbol: marker
         },
         stickyTracking: false,
         data: seriesData

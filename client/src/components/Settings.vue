@@ -316,7 +316,7 @@
             >
             <v-card>
                 <v-toolbar class="info" dark>
-                    <v-toolbar-title>Список облигаций</v-toolbar-title>
+                    <v-toolbar-title>Список «{{bondDialogTitle}}»</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-btn icon @click.stop="bondDialog = false">
                         <v-icon>mdi-close</v-icon>
@@ -339,7 +339,9 @@
                         </thead>
                         <tbody>
                             <tr v-for="bond of bondsList" :key="bond.isin">
-                                <td>{{bond.name}}</td>
+                                <td>
+                                    <v-btn class="primary" @click="showItemDialog(bond)">{{bond.name}}</v-btn>
+                                </td>
                                 <td>{{bond.isin}}</td>
                                 <td>
                                     <v-tooltip v-if="isAdmin" right>
@@ -393,6 +395,7 @@ export default {
         dialogAddUserGroup: false,
         deleteDialog: false,
         bondDialog: false,
+        bondDialogTitle: '',
         bondDialogLoading: true,
         groupName: '',
         baseLineName: '',
@@ -415,6 +418,10 @@ export default {
         this.loading = false
     },
     methods: {
+        showItemDialog(bond) {
+            // this.bondDialog = false
+            this.$parent.$parent.showItemDialog(bond)
+        },
         showBondsList(group, type) {
             this.bondsList = []
             this.typeGroup = type
@@ -428,6 +435,7 @@ export default {
             })
 
             this.bondDialog = true
+            this.bondDialogTitle = group.name
             this.bondDialogLoading = false
         },
         async deleteBondOnList(bond) {
@@ -486,9 +494,14 @@ export default {
             this.loading = false
         },
         createLine(line) {
-            console.log(line)
             const color = this.$refs[line.id + '_color'][0].lineColor
-            this.$parent.$parent.chartsCreateLine(line, color, this.typeLine)
+            const symbol = this.$refs[line.id + '_color'][0].selectedMarker
+            let marker = ''
+            if( symbol === 'mdi-circle') {marker = 'circle'}
+            else if  (symbol === 'mdi-square') {marker = 'square'}
+            else if  (symbol === 'mdi-rhombus') {marker = 'diamond'}
+            else if  (symbol === 'mdi-triangle') {marker = 'triangle'}
+            this.$parent.$parent.chartsCreateLine(line, color, marker, this.typeLine)
         },
         deleteLine(line) {
             this.$parent.$parent.chartsDeleteLine(line)
@@ -499,9 +512,14 @@ export default {
             this.deletebleUserGroup = ''
         },
         createUserGroupLine(group) {
-            console.log(group)
             const color = this.$refs[group.id + '_color'][0].lineColor
-            this.$parent.$parent.chartsCreateLine(group, color, this.typeLine)
+            const symbol = this.$refs[group.id + '_color'][0].selectedMarker
+            let marker = ''
+            if( symbol === 'mdi-circle') {marker = 'circle'}
+            else if  (symbol === 'mdi-square') {marker = 'square'}
+            else if  (symbol === 'mdi-rhombus') {marker = 'diamond'}
+            else if  (symbol === 'mdi-triangle') {marker = 'triangle'}
+            this.$parent.$parent.chartsCreateLine(group, color, marker, this.typeLine)
         },
         deleteUserGroupLine(group) {
             this.$parent.$parent.chartsDeleteLine(group)
