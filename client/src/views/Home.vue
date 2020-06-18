@@ -408,6 +408,7 @@ export default {
     chartOptions: {},
     refreshChart: 0,
     realTimeTrigger: false,
+    realTimeCount: 5,
     realTimeLoading: false,
     newArr: [],
     refreshTable: []
@@ -548,6 +549,7 @@ export default {
       if(this.realTimeTrigger) {
         const interval = setInterval( async () => {
           if(!this.realTimeTrigger) clearInterval(interval)
+
           const newArr = await BondsService.RealTime(this.items)
           console.log('Обновились: ',newArr)
           newArr.forEach(newBond => {
@@ -555,24 +557,29 @@ export default {
             const color = this.items[idx].last_price < newBond.last_price ? 'green' : 'red'
             this.items[idx] = newBond
             this.refreshTable++
-            // setTimeout( async () => {
-            //   if(idx !== -1) {
-            //     const tr = document.querySelectorAll('.v-data-table__wrapper table tbody tr')
-            //     if(tr[idx]) {
-            //       tr[idx].classList.add('highlight')
-            //       tr[idx].classList.add(color)
-            //     }
-            //     setTimeout( async () => {
-            //       if(tr[idx]) {
-            //         tr[idx].classList.remove('highlight')
-            //         tr[idx].classList.remove(color)
-            //       }
-            //     }, 1999)
-            //   }
-            // }, 0) 
+            setTimeout( async () => {
+              if(idx !== -1) {
+
+                const tr = document.querySelectorAll('.v-data-table__wrapper table tbody tr')
+                let bond
+                tr.forEach(item => {
+                  const td = item.querySelectorAll('td')
+                  if(td[2].innerText === newBond.isin) {
+                    bond = item
+                    bond.classList.add('highlight', color)
+                  }
+                })
+                
+                setTimeout( async () => {
+                  if(bond) {
+                    bond.classList.remove('highlight', color)
+                  }
+                }, 1999)
+              }
+            }, 0) 
           })
           this.filterData(this.items)
-        }, 30000)
+        }, this.realTimeCount * 1000)
       } else {
         return
       }

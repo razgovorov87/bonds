@@ -52,6 +52,13 @@
 
             <v-list-item>
               <span class="subtitle-2">
+                Cпрос:
+                <span class="font-weight-bold ml-2">{{dialog.bond.bid}}</span>
+              </span>
+            </v-list-item>
+
+            <v-list-item>
+              <span class="subtitle-2">
                 Лучший спрос:
                 <span class="font-weight-bold ml-2">{{dialog.bond.best_spros}}</span>
               </span>
@@ -59,7 +66,14 @@
 
             <v-list-item>
               <span class="subtitle-2">
-                Лучший предложение:
+                Предложение:
+                <span class="font-weight-bold ml-2">{{dialog.bond.ask}}</span>
+              </span>
+            </v-list-item>
+
+            <v-list-item>
+              <span class="subtitle-2">
+                Лучшее предложение:
                 <span class="font-weight-bold ml-2">{{dialog.bond.best_predl}}</span>
               </span>
             </v-list-item>

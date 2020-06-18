@@ -83,10 +83,22 @@
         <v-btn class="title font-weight-bold white--text mr-3" text href="/">Bonds</v-btn>
         <v-switch v-model="dark" @change="changeTheme" inset append-icon="mdi-weather-night" prepend-icon="mdi-weather-sunny" color="white"></v-switch>
         <v-divider vertical class="mx-5"></v-divider>
-        <v-chip label :color="realTime ? 'success' : ''">
+        <v-chip label :color="realTime ? 'success' : ''" class="real__time__chip">
           <v-switch v-model="realTime" color="white" @change="updateRealTime"></v-switch>
           Обновление данных в реальном времени
         </v-chip>
+        <v-menu offset-y transition="slide-y-transition">
+          <template v-slot:activator="{ on }">
+            <v-chip v-on="on" :color="realTime ? 'success' : ''" label class="real__time__count">{{realTimeMinute}} мин <v-icon size="18" class="ml-1">mdi-menu-down</v-icon></v-chip>
+          </template>
+          <v-list dense>
+            <v-list-item @click="realTimeCount(1)">1 мин</v-list-item>
+            <v-list-item @click="realTimeCount(5)">5 мин</v-list-item>
+            <v-list-item @click="realTimeCount(10)">10 мин</v-list-item>
+            <v-list-item @click="realTimeCount(30)">30 мин</v-list-item>
+            <v-list-item @click="realTimeCount(60)">60 мин</v-list-item>
+          </v-list>
+        </v-menu>
       </div>
 
       <v-spacer></v-spacer>
@@ -175,6 +187,13 @@ html {
   flex-direction: row;
   flex-wrap: inherit;
 }
+.real__time__chip {
+  border-radius: 5px 0 0 5px !important;
+  border-right: 1px solid #ababab !important;
+}
+.real__time__count {
+  border-radius: 0 5px 5px 0 !important;
+}
 </style>
 
 <script>
@@ -189,7 +208,8 @@ import BondsService from '../BondsService'
       timer: null,
       dark: false,
       loading: true,
-      realTime: false
+      realTime: false,
+      realTimeMinute: 5
     }),
     async created() {
       if (!Object.keys(this.$store.getters.info).length) {
@@ -255,6 +275,10 @@ import BondsService from '../BondsService'
       },
       updateRealTime() {
         this.$refs.childComponent.realTimeTrigger = this.realTime
+      },
+      realTimeCount(minute) {
+        this.realTimeMinute = minute
+        this.$refs.childComponent.realTimeCount = this.realTimeMinute
       }
     },
     computed: {
