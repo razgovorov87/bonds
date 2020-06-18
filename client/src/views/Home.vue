@@ -243,6 +243,7 @@
             show-select
             item-key="isin"
             locale="ru-RU"
+            :key="refreshTable"
           >
             <template v-slot:item.name="{ item }">
               <v-btn color="primary" @click="selectScatter(item)">{{item.name}}</v-btn>
@@ -282,6 +283,17 @@
 .theme--dark.v-card, .theme--dark.v-application, .theme--dark.v-expansion-panels .v-expansion-panel, .theme--dark.v-data-table,
 .theme--dark.v-list, .theme--dark.v-sheet.line__color {
   background-color: #282c3d !important;
+}
+.v-data-table__wrapper table tbody tr.highlight {
+  animation: highlight 2s ease-out;
+}
+@keyframes highlight {
+  0% {
+    background-color: #21a330;
+  }
+  100% {
+    background-color: #fff;
+  }
 }
 </style>
 
@@ -382,7 +394,9 @@ export default {
     chartOptions: {},
     refreshChart: 0,
     realTimeTrigger: false,
-    realTimeLoading: false
+    realTimeLoading: false,
+    newArr: [],
+    refreshTable: []
   }),
   async created() {
     try {
@@ -516,13 +530,27 @@ export default {
   },
   watch: {
     realTimeTrigger: async function() {
+      
       if(this.realTimeTrigger) {
         const interval = setInterval( async () => {
           const newArr = await BondsService.RealTime(this.items)
-          this.items = newArr
-          this.filterData(this.items)
+          newArr.forEach(newBond => {
+            const idx = this.items.findIndex(item => item._id === newBond._id)
+            this.items[idx] = newBond
+            this.refreshTable++
+            setTimeout( async () => {
+              if(idx !== -1) {
+                const tr = document.querySelectorAll('.v-data-table__wrapper table tbody tr')
+                tr[idx].classList.add('highlight')
+                setTimeout( () => {
+                  tr[idx].classList.remove('highlight')
+                }, 1999)
+              }
+            }, 0) 
+          })
+          // this.filterData(this.items)
           if(!this.realTimeTrigger) clearInterval(interval)
-        }, 60000)
+        }, 30000)
       } else {
         return
       }
