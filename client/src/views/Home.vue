@@ -284,10 +284,25 @@
 .theme--dark.v-list, .theme--dark.v-sheet.line__color {
   background-color: #282c3d !important;
 }
-.v-data-table__wrapper table tbody tr.highlight {
-  animation: highlight 2s ease-out;
+.v-data-table__wrapper table tbody tr.highlight.green {
+  animation: highlightGreen 2s ease-out;
 }
-@keyframes highlight {
+
+.v-data-table__wrapper table tbody tr.highlight.red {
+  animation: highlightRed 2s ease-out;
+}
+
+
+@keyframes highlightRed {
+  0% {
+    background-color: #c22d2d;
+  }
+  100% {
+    background-color: #fff;
+  }
+}
+
+@keyframes highlightGreen {
   0% {
     background-color: #21a330;
   }
@@ -534,20 +549,27 @@ export default {
       if(this.realTimeTrigger) {
         const interval = setInterval( async () => {
           const newArr = await BondsService.RealTime(this.items)
-          console.log(newArr)
+          console.log('Обновились: ',newArr)
           newArr.forEach(newBond => {
             const idx = this.items.findIndex(item => item.isin === newBond.isin)
+            const color = this.items[idx].last_price < newBond.last_price ? 'green' : 'red'
             this.items[idx] = newBond
             this.refreshTable++
-            // setTimeout( async () => {
-            //   if(idx !== -1) {
-            //     const tr = document.querySelectorAll('.v-data-table__wrapper table tbody tr')
-            //     tr[idx].classList.add('highlight')
-            //     setTimeout( () => {
-            //       tr[idx].classList.remove('highlight')
-            //     }, 1999)
-            //   }
-            // }, 0) 
+            setTimeout( async () => {
+              if(idx !== -1) {
+                const tr = document.querySelectorAll('.v-data-table__wrapper table tbody tr')
+                if(tr[idx]) {
+                  tr[idx].classList.add('highlight')
+                  tr[idx].classList.add(color)
+                }
+                setTimeout( async () => {
+                  if(tr[idx]) {
+                    tr[idx].classList.remove('highlight')
+                    tr[idx].classList.remove(color)
+                  }
+                }, 1999)
+              }
+            }, 0) 
           })
           this.filterData(this.items)
           if(!this.realTimeTrigger) clearInterval(interval)

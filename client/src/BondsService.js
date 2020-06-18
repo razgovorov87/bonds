@@ -30,7 +30,9 @@ class BondsService {
                         newArr.push(newBond)
                     }
                 });
-                resolve(newArr)
+                if(newArr.length) {
+                    resolve(newArr)
+                }
             } catch (e) {
                 reject(e);
             }
