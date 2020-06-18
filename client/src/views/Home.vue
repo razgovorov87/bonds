@@ -243,7 +243,6 @@
             show-select
             item-key="isin"
             locale="ru-RU"
-            :key="refreshTable"
           >
             <template v-slot:item.name="{ item }">
               <v-btn color="primary" @click="selectScatter(item)">{{item.name}}</v-btn>
@@ -285,28 +284,28 @@
   background-color: #282c3d !important;
 }
 .v-data-table__wrapper table tbody tr.highlight.green {
-  animation: highlightGreen 2s ease-out;
+  animation: highlightGreen 2s ease;
 }
 
 .v-data-table__wrapper table tbody tr.highlight.red {
-  animation: highlightRed 2s ease-out;
+  animation: highlightRed 2s ease;
 }
 
 
 @keyframes highlightRed {
-  0% {
+  from {
     background-color: #c22d2d;
   }
-  100% {
+  to {
     background-color: #fff;
   }
 }
 
 @keyframes highlightGreen {
-  0% {
+  from {
     background-color: #21a330;
   }
-  100% {
+  to {
     background-color: #fff;
   }
 }
@@ -548,6 +547,7 @@ export default {
       
       if(this.realTimeTrigger) {
         const interval = setInterval( async () => {
+          if(!this.realTimeTrigger) clearInterval(interval)
           const newArr = await BondsService.RealTime(this.items)
           console.log('Обновились: ',newArr)
           newArr.forEach(newBond => {
@@ -555,24 +555,23 @@ export default {
             const color = this.items[idx].last_price < newBond.last_price ? 'green' : 'red'
             this.items[idx] = newBond
             this.refreshTable++
-            setTimeout( async () => {
-              if(idx !== -1) {
-                const tr = document.querySelectorAll('.v-data-table__wrapper table tbody tr')
-                if(tr[idx]) {
-                  tr[idx].classList.add('highlight')
-                  tr[idx].classList.add(color)
-                }
-                setTimeout( async () => {
-                  if(tr[idx]) {
-                    tr[idx].classList.remove('highlight')
-                    tr[idx].classList.remove(color)
-                  }
-                }, 1999)
-              }
-            }, 0) 
+            // setTimeout( async () => {
+            //   if(idx !== -1) {
+            //     const tr = document.querySelectorAll('.v-data-table__wrapper table tbody tr')
+            //     if(tr[idx]) {
+            //       tr[idx].classList.add('highlight')
+            //       tr[idx].classList.add(color)
+            //     }
+            //     setTimeout( async () => {
+            //       if(tr[idx]) {
+            //         tr[idx].classList.remove('highlight')
+            //         tr[idx].classList.remove(color)
+            //       }
+            //     }, 1999)
+            //   }
+            // }, 0) 
           })
           this.filterData(this.items)
-          if(!this.realTimeTrigger) clearInterval(interval)
         }, 30000)
       } else {
         return
@@ -590,6 +589,9 @@ export default {
     }
   },
   methods: {
+    updateItemsPerPage(events) {
+      console.log(events)
+    },
     toggle() {
       this.$nextTick(() => {
         if (this.likesAllItems) {
