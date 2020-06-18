@@ -534,21 +534,22 @@ export default {
       if(this.realTimeTrigger) {
         const interval = setInterval( async () => {
           const newArr = await BondsService.RealTime(this.items)
+          console.log(newArr)
           newArr.forEach(newBond => {
-            const idx = this.items.findIndex(item => item._id === newBond._id)
+            const idx = this.items.findIndex(item => item.isin === newBond.isin)
             this.items[idx] = newBond
             this.refreshTable++
-            setTimeout( async () => {
-              if(idx !== -1) {
-                const tr = document.querySelectorAll('.v-data-table__wrapper table tbody tr')
-                tr[idx].classList.add('highlight')
-                setTimeout( () => {
-                  tr[idx].classList.remove('highlight')
-                }, 1999)
-              }
-            }, 0) 
+            // setTimeout( async () => {
+            //   if(idx !== -1) {
+            //     const tr = document.querySelectorAll('.v-data-table__wrapper table tbody tr')
+            //     tr[idx].classList.add('highlight')
+            //     setTimeout( () => {
+            //       tr[idx].classList.remove('highlight')
+            //     }, 1999)
+            //   }
+            // }, 0) 
           })
-          // this.filterData(this.items)
+          this.filterData(this.items)
           if(!this.realTimeTrigger) clearInterval(interval)
         }, 30000)
       } else {
