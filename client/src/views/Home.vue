@@ -283,11 +283,11 @@
 .theme--dark.v-list, .theme--dark.v-sheet.line__color {
   background-color: #282c3d !important;
 }
-.v-data-table__wrapper table tbody tr.highlight.green {
+.v-data-table__wrapper table tbody tr.highlight__green {
   animation: highlightGreen 2s ease;
 }
 
-.v-data-table__wrapper table tbody tr.highlight.red {
+.v-data-table__wrapper table tbody tr.highlight__red {
   animation: highlightRed 2s ease;
 }
 
@@ -360,7 +360,11 @@ export default {
     snackbar: false,
     snackbarstatus: "",
     snackbarText: "",
-    bonds: [],
+    bonds: [
+      {id: 1, name: 'Asdasdasd'},
+      {id: 2, name: '123123123'},
+      {id: 3, name: 'gdfmnkg[ndkfg'}
+    ],
     bond: [],
     filterIsin: "",
     filterName: "",
@@ -551,10 +555,10 @@ export default {
           if(!this.realTimeTrigger) clearInterval(interval)
 
           const newArr = await BondsService.RealTime(this.items)
-          console.log('Обновились: ',newArr)
+          console.log('Обновились: ', newArr)
           newArr.forEach(newBond => {
             const idx = this.items.findIndex(item => item.isin === newBond.isin)
-            const color = this.items[idx].last_price < newBond.last_price ? 'green' : 'red'
+            const colorClass = this.items[idx].last_price < newBond.last_price ? 'highlight__green' : 'highlight__red'
             this.items[idx] = newBond
             this.refreshTable++
             setTimeout( async () => {
@@ -566,19 +570,18 @@ export default {
                   const td = item.querySelectorAll('td')
                   if(td[2].innerText === newBond.isin) {
                     bond = item
-                    bond.classList.add('highlight', color)
+                    bond.classList.add(colorClass)
                   }
                 })
                 
                 setTimeout( async () => {
                   if(bond) {
-                    bond.classList.remove('highlight', color)
+                    bond.classList.remove(colorClass)
                   }
-                }, 1999)
+                }, 2500)
               }
             }, 0) 
           })
-          this.filterData(this.items)
         }, this.realTimeCount * 1000)
       } else {
         return
@@ -596,9 +599,6 @@ export default {
     }
   },
   methods: {
-    updateItemsPerPage(events) {
-      console.log(events)
-    },
     toggle() {
       this.$nextTick(() => {
         if (this.likesAllItems) {
@@ -747,14 +747,24 @@ export default {
       this.scatters = [];
       this.items.map(bond => {
         this.scatters.push({
-          id: bond.isin,
-          name: bond.name,
+          id: bond.isin + '__bid',
+          name: bond.name + ' (Bid)',
           last_price: bond.last_price,
           best_spros: bond.best_spros,
           best_predl: bond.best_predl,
           oborot: bond.oborot,
           x: bond.duration,
-          y: bond.profit
+          y: bond.bid
+        },
+        {
+          id: bond.isin + '__ask',
+          name: bond.name + ' (Ask)',
+          last_price: bond.last_price,
+          best_spros: bond.best_spros,
+          best_predl: bond.best_predl,
+          oborot: bond.oborot,
+          x: bond.duration,
+          y: bond.ask
         });
       });
       this.scatters.sort((a, b) => a.x - b.x);

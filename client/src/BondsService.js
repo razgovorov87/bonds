@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const url = 'http://82.148.31.138:80/api/bonds';
+const PythonUrl = 'http://82.148.31.138:9090';
 
 class BondsService {
     //get
@@ -33,6 +34,18 @@ class BondsService {
                 if(newArr.length) {
                     resolve(newArr)
                 }
+            } catch (e) {
+                reject(e);
+            }
+        })
+    }
+
+    static calculate() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const res = await axios.get(`${PythonUrl}?isin=RU000A101DF5&price=102`);
+                const data = res.data;
+                resolve(data)
             } catch (e) {
                 reject(e);
             }
