@@ -15,7 +15,7 @@
 
     <v-col cols="12" style="padding-top: 0;">
       <v-card>
-        <v-skeleton-loader v-if="loading" type="image"></v-skeleton-loader>
+        <v-skeleton-loader v-if="chartLoading || loading" type="image"></v-skeleton-loader>
         <highcharts ref="chart" v-else :options="chartOptions" :key="refreshChart"></highcharts>
       </v-card>
 
@@ -406,6 +406,22 @@ export default {
     loading: true,
     loadingOverlay: true,
     scatters: [],
+    series1: {
+      name: 'Bid доходность',
+      data: [],
+      lineWidth: 0, 
+      marker: {
+        enabled: true,
+        radius: 4
+    }},
+    series2: {
+      name: 'Ask доходность',
+      data: [], 
+      lineWidth: 0, 
+      marker: {
+        enabled: true,
+        radius: 4
+    }},
     items: [],
     error: "",
     selectPoint: [],
@@ -415,7 +431,9 @@ export default {
     realTimeCount: 5,
     realTimeLoading: false,
     newArr: [],
-    refreshTable: []
+    refreshTable: [],
+    typeChart: false,
+    chartLoading: false
   }),
   async created() {
     try {
@@ -540,7 +558,6 @@ export default {
           }
         ]
       };
-
       this.loading = false;
       this.loadingOverlay = false;
     } catch (e) {
@@ -596,6 +613,12 @@ export default {
       this.chartOptions.xAxis.title.style = {color: this.theme === 'dark' ? '#fff' : '#333'}
       this.chartOptions.yAxis.title.style = {color: this.theme === 'dark' ? '#fff' : '#333'}
       this.refreshChart++;
+    },
+    typeChart: function() {
+      // this.chartLoading = true
+      this.getScatters()
+      this.refreshChart++
+      this.chartLoading = false
     }
   },
   methods: {
@@ -745,39 +768,278 @@ export default {
     },
     getScatters() {
       this.scatters = [];
+      this.series1.data = [];
+      this.series2.data = [];
+      const bg = this.theme === "dark" ? "#282c3d" : "#fff";
+      const textcolor = this.theme === "dark" ? "#fff" : "#333";
+      if(this.typeChart === false) {
+         this.items.map(bond => {
+          this.scatters.push({
+            id: bond.isin,
+            name: bond.name,
+            last_price: bond.last_price,
+            best_spros: bond.best_spros,
+            best_predl: bond.best_predl,
+            oborot: bond.oborot,
+            x: bond.duration,
+            y: bond.profit
+          })
+        })
+      } else {
       this.items.map(bond => {
-        this.scatters.push({
-          id: bond.isin + '__bid',
-          name: bond.name + ' (Bid)',
+        this.series1.data.push({
+          id: bond.isin,
+          name: bond.name,
           last_price: bond.last_price,
           best_spros: bond.best_spros,
           best_predl: bond.best_predl,
           oborot: bond.oborot,
           x: bond.duration,
-          y: bond.bid
-        },
-        {
-          id: bond.isin + '__ask',
-          name: bond.name + ' (Ask)',
-          last_price: bond.last_price,
-          best_spros: bond.best_spros,
-          best_predl: bond.best_predl,
-          oborot: bond.oborot,
-          x: bond.duration,
-          y: bond.ask
+          y: bond.bid_yield
         });
+        this.series2.data.push({
+          id: bond.isin,
+          name: bond.name,
+          last_price: bond.last_price,
+          best_spros: bond.best_spros,
+          best_predl: bond.best_predl,
+          oborot: bond.oborot,
+          x: bond.duration,
+          y: bond.ask_yield
+        })
       });
+      }
       this.scatters.sort((a, b) => a.x - b.x);
+      this.series1.data.sort((a, b) => a.x - b.x);
+      this.series2.data.sort((a, b) => a.x - b.x);
       setTimeout(() => {
-        this.chart.series[0].setData(this.scatters);
+        if( this.typeChart === false) {
+          this.chartOptions = {
+            chart: {
+              height: 700,
+              backgroundColor: bg,
+              amimation: {
+                duration: 500
+              },
+              type: "scatter",
+              panning: {
+                enabled: true,
+                type: "xy"
+              },
+              panKey: "shift",
+              zoomType: "xy",
+              events: {
+                load: (function(self) {
+                  return function() {
+                    self.chart = this;
+                  };
+                })(this)
+              }
+            },
+            title: {
+              text: "Облигации"
+            },
+            xAxis: {
+              min: 0,
+              minRange: 0.5,
+              title: {
+                text: "Дюрация, лет",
+                style: {color: textcolor}
+              },
+              minorTickInterval: 1,
+              startOnTick: true,
+              endOnTick: true,
+              labels: {
+                style: {color: textcolor}
+              }
+            },
+            yAxis: {
+              minRange: 1,
+              title: {
+                text: "Доходность, %",
+                style: {color: textcolor}
+              },
+              labels: {
+                style: {color: textcolor}
+              }
+            },
+            legend: {
+              enabled: false
+            },
+            plotOptions: {
+              series: {
+                turboThreshold: 2000,
+                stickyTracking: false
+              },
+              scatter: {
+                marker: {
+                  radius: 4,
+                  states: {
+                    hover: {
+                      enabled: true,
+                      lineColor: "rgb(100,100,100)",
+                      fillColor: "#EF5350"
+                    }
+                  }
+                },
+                states: {
+                  hover: {
+                    marker: {
+                      enabled: false
+                    }
+                  }
+                }
+              }
+            },
+            navigator: {
+              enabled: true,
+              series: {
+                type: "scatter",
+                lineWidth: 0,
+                marker: {
+                  enabled: true,
+                  radius: 2
+                }
+              },
+              xAxis: {
+                labels: {
+                  enabled: false
+                }
+              }
+            },
+            tooltip: {
+              headerFormat:
+                '<span style="font-size: 10px">{point.point.id}</span><br><b>{point.point.name}</b><br>',
+              pointFormat:
+                "Дюрация: {point.x} лет<br> Доходность: {point.y}%<br>Цена послед.: {point.last_price}<br>Лучший спрос: {point.best_spros}<br>Лучшее предл.: {point.best_predl}<br>Оборот: {point.oborot}<br>"
+            },
+            series: [
+              {
+                data: this.scatters
+              }
+            ]
+          };
+          this.chart.options.chart.type = 'scatter'
+          this.chart.series[0].setData(this.scatters);
+        } else {
+          this.chartOptions = {
+            chart: {
+              height: 700,
+              backgroundColor: bg,
+              amimation: {
+                duration: 500
+              },
+              type: "line",
+              panning: {
+                enabled: true,
+                type: "xy"
+              },
+              panKey: "shift",
+              zoomType: "xy",
+              events: {
+                load: (function(self) {
+                  return function() {
+                    self.chart = this;
+                  };
+                })(this)
+              }
+            },
+            title: {
+              text: "Облигации"
+            },
+            xAxis: {
+              min: 0,
+              minRange: 0.5,
+              title: {
+                text: "Дюрация, лет",
+                style: {color: textcolor}
+              },
+              minorTickInterval: 1,
+              startOnTick: true,
+              endOnTick: true,
+              labels: {
+                style: {color: textcolor}
+              }
+            },
+            yAxis: {
+              minRange: 1,
+              title: {
+                text: "Доходность, %",
+                style: {color: textcolor}
+              },
+              labels: {
+                style: {color: textcolor}
+              }
+            },
+            legend: {
+              enabled: false
+            },
+            plotOptions: {
+              series: {
+                turboThreshold: 2000,
+                stickyTracking: false,
+                lineWidth: 0,
+                states: {
+                  hover: {
+                    enabled: true,
+                    lineWidth: 0,
+                    lineWidthPlus: 0
+                  }
+                }
+              },
+              line: {
+                marker: {
+                  radius: 4,
+                  states: {
+                    hover: {
+                      enabled: true,
+                      lineColor: "rgb(100,100,100)",
+                      fillColor: "#EF5350"
+                    }
+                  }
+                }
+              }
+            },
+            navigator: {
+              enabled: true,
+              series: {
+                type: "scatter",
+                lineWidth: 0,
+                marker: {
+                  enabled: true,
+                  radius: 2
+                }
+              },
+              tooltip: {
+                split: true,
+                distance: 30,
+                crosshair: true
+              },
+              xAxis: {
+                labels: {
+                  enabled: false
+                }
+              }
+            },
+            series: [this.series2, this.series1]
+          };
+          this.chart.options.tooltip = {
+          }
+          this.chart.series[0].setData(this.series1.data);
+          this.chart.series[1].setData(this.series2.data);
+        }
       }, 0);
     },
     getLine(item) {
       const sortedData = [];
       item.bonds.forEach(bond => {
-        this.scatters.find(item => {
-          if (item.id == bond) {
-            sortedData.push(item);
+        this.bonds.find(item => {
+          if (item.isin == bond) {
+            sortedData.push({
+              id: bond,
+              x: item.profit,
+              y: item.duration
+            });
           }
         });
       });
@@ -986,7 +1248,6 @@ export default {
         stickyTracking: false,
         data: seriesData
       };
-
       this.chartsDeleteLine(line);
       this.chart.addSeries(series);
     },
@@ -1011,13 +1272,8 @@ export default {
         }
       });
 
-      if (resultType) {
-        typeLine = "spline";
-      } else {
-        typeLine = "line";
-      }
       const series = {
-        type: typeLine,
+        type: 'line',
         name: line.name,
         color: color,
         lineWidth: 3,
@@ -1029,7 +1285,10 @@ export default {
         stickyTracking: false,
         data: seriesData
       };
+      
       this.chart.addSeries(series);
+      
+      console.log(this.chart)
     },
     chartsDeleteLine(line) {
       const seriesIndex = this.chart.series.findIndex(

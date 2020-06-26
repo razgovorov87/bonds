@@ -83,9 +83,21 @@
         <v-btn class="title font-weight-bold white--text mr-3" text href="/">Bonds</v-btn>
         <v-switch v-model="dark" @change="changeTheme" inset append-icon="mdi-weather-night" prepend-icon="mdi-weather-sunny" color="white"></v-switch>
         <v-divider vertical class="mx-5"></v-divider>
+        <v-switch inset v-model="typeChart" @change="editTypeChart" class="d-flex align-center">
+          <template v-slot:prepend>
+            <span>Сделки</span>
+          </template>
+          <template v-slot:append>
+            <span>Котировки</span>
+          </template>
+        </v-switch>
+        <v-divider vertical class="mx-5"></v-divider>
         <v-chip label :color="realTime ? 'success' : ''" class="real__time__chip">
-          <v-switch v-model="realTime" color="white" @change="updateRealTime"></v-switch>
-          Обновление данных в реальном времени
+          <v-switch v-model="realTime" color="white" @change="updateRealTime">
+            <template v-slot:append>
+              <v-icon class="white--text ml-2" id="realtime__icon">mdi-cached</v-icon>
+            </template>
+          </v-switch>
         </v-chip>
         <v-menu offset-y transition="slide-y-transition">
           <template v-slot:activator="{ on }">
@@ -102,22 +114,6 @@
       </div>
 
       <v-spacer></v-spacer>
-
-      <v-btn
-        @click="resetZoom()"
-        class="mr-2 elevation-0"
-        :color="theme === 'light' ? '#060818' : '#222533'"
-        :disabled="disableButton"
-      >
-        <v-icon
-          class="mr-2"
-        >
-          mdi-magnify-minus-outline
-        </v-icon>
-        Сбросить zoom
-      </v-btn>
-
-
 
       <v-btn
         v-if="timerDisplay"
@@ -172,6 +168,17 @@
 </template>
 
 <style>
+#realtime__icon.anim {
+  animation: rotate 1s linear infinite;
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0)
+  }
+  to {
+    transform: rotate(360deg)
+  }
+}
 html {
   overflow-y: auto;
 }
@@ -209,7 +216,8 @@ import BondsService from '../BondsService'
       dark: false,
       loading: true,
       realTime: false,
-      realTimeMinute: 5
+      realTimeMinute: 5,
+      typeChart: false
     }),
     async created() {
       if (!Object.keys(this.$store.getters.info).length) {
@@ -270,15 +278,20 @@ import BondsService from '../BondsService'
           this.timerDisplay = false
         }, 60*1000);
       },
-      resetZoom() {
-        this.$refs.childComponent.resetZoom()
-      },
       updateRealTime() {
+        if(this.realTime === true) {
+          document.querySelector('#realtime__icon').classList.add('anim')
+        } else {
+          document.querySelector('#realtime__icon').classList.remove('anim')
+        }
         this.$refs.childComponent.realTimeTrigger = this.realTime
       },
       realTimeCount(minute) {
         this.realTimeMinute = minute
         this.$refs.childComponent.realTimeCount = this.realTimeMinute
+      },
+      editTypeChart() {
+        this.$refs.childComponent.typeChart = this.typeChart
       }
     },
     computed: {

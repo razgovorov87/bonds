@@ -87,11 +87,7 @@
                     </div>
                 </div>
                 <v-divider style="border-color: rgba(255,255,255, 0.3)"></v-divider>
-                <div class="d-flex px-3 align-center justify-space-between">
-                    <v-switch 
-                        v-model="typeLine" :value="line.name" inset dense prepend-icon="mdi-chart-line" append-icon="mdi-chart-bell-curve-cumulative"
-                        @change="editTypeLine(line)"
-                    ></v-switch>
+                <div class="d-flex pa-3 align-center justify-space-between">
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
                             <v-btn v-on="on" small @click="showBondsList(line, 'baseLine')">
@@ -215,10 +211,6 @@
                 </div>
                 <v-divider style="border-color: rgba(255,255,255, 0.3)"></v-divider>
                 <div class="d-flex px-3 align-center justify-space-between">
-                    <v-switch 
-                    v-model="typeLine" :value="group.name" inset dense prepend-icon="mdi-chart-line" append-icon="mdi-chart-bell-curve-cumulative"
-                    @change="editTypeLine(group)"
-                    ></v-switch>
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
                             <v-btn v-on="on" small @click="showBondsList(group, 'userGroup')">
