@@ -405,8 +405,10 @@ export default {
       { text: "Доходность", value: "profit" },
       { text: "Дюрация", value: "duration" },
       { text: "Цена послед.", value: "last_price" },
-      { text: "Cпрос", value: "bid" },
-      { text: "Предложение", value: "ask" },
+      { text: "BID", value: "bid" },
+      { text: "ASK", value: "ask" },
+      { text: "BID yield", value: "bid_yield" },
+      { text: "ASK yield", value: "ask_yield" },
       { text: "Оборот", value: "oborot" },
       { text: "Тип", value: "type", width: "243px" },
       { text: "Эмитент", value: "emitent.shortName", width: "240px" },
@@ -1048,6 +1050,7 @@ export default {
         this.bonds.find(item => {
           if (item.isin == bond) {
             sortedData.push({
+              ...item,
               id: bond,
               y: item.profit,
               x: item.duration
@@ -1056,6 +1059,7 @@ export default {
         });
       });
 
+      
       function byField(field) {
         return (a, b) => (a[field] > b[field] ? 1 : -1);
       }
@@ -1130,8 +1134,9 @@ export default {
 
       finalArr = finalArr.filter(item => {
         if (
-          this.profitRange[0] <= item.profit &&
-          this.profitRange[1] >= item.profit
+          (this.profitRange[0] <= item.profit && this.profitRange[1] >= item.profit) &&
+          ((this.profitRange[0] <= item.bid_yield && this.profitRange[1] >= item.bid_yield)) &&
+          ((this.profitRange[0] <= item.ask_yield && this.profitRange[1] >= item.ask_yield)) 
         ) {
           return item;
         }
