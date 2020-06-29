@@ -129,7 +129,8 @@
                     <v-text-field 
                     label="Название группы" 
                     v-model="baseLineName" 
-                    required 
+                    required
+                    :counter="15" 
                     :rules="baseLineNameRules"
                     ></v-text-field>
                     <v-chip
@@ -210,7 +211,7 @@
                     </div>
                 </div>
                 <v-divider style="border-color: rgba(255,255,255, 0.3)"></v-divider>
-                <div class="d-flex px-3 align-center justify-space-between">
+                <div class="d-flex pa-3 align-center justify-space-between">
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
                             <v-btn v-on="on" small @click="showBondsList(group, 'userGroup')">
@@ -252,7 +253,8 @@
                         <v-text-field 
                         label="Название группы" 
                         v-model="userGroupName" 
-                        required 
+                        required
+                        :counter="15"
                         :rules="userGroupNameRules"
                         ></v-text-field>
                         <v-chip
@@ -374,7 +376,7 @@
 
 <script>
 import LineColor from '@/components/Home/LineColor'
-import {required} from 'vuelidate/lib/validators'
+import {required, maxLength} from 'vuelidate/lib/validators'
 export default {
     data: () => ({
         loading: true,
@@ -393,10 +395,12 @@ export default {
         baseLineName: '',
         baseLineNameRules: [
             v => !!v || 'Введите название',
+            v => v.length <= 15 || 'Превышено допустимое кол-во символов',
         ],
         userGroupName: '',
         userGroupNameRules: [
             v => !!v || 'Введите название',
+            v => v.length <= 15 || 'Превышено допустимое кол-во символов',
         ],
         userGroups: [],
         error: '',

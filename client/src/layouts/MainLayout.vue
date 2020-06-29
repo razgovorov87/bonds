@@ -169,7 +169,7 @@
 
 <style>
 #realtime__icon.anim {
-  animation: rotate 3s linear infinite;
+  animation: rotate 5s linear infinite;
 }
 @keyframes rotate {
   from {

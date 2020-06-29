@@ -217,6 +217,12 @@
                           </v-col>
 
                           <v-row justify="end">
+                            <v-col cols="5">
+                              <div class="d-flex">
+                                <v-checkbox v-model="zeroOborot" class="mr-5" color="primary" label="Убрать бумаги с 0 оборотом"></v-checkbox>
+                                <v-checkbox v-model="BidAskZero" color="primary" label="Убрать бумаги с пустым стаканом"></v-checkbox>
+                              </div>
+                            </v-col>
                             <v-col cols="3">
                               <v-btn
                                 class="mr-2"
@@ -309,6 +315,9 @@
     background-color: #fff;
   }
 }
+.v-skeleton-loader__image {
+  height: 700px !important;
+}
 </style>
 
 <script>
@@ -345,8 +354,8 @@ export default {
     dialogAddUserGroup: false,
     userGroupName: "",
     profitRange: [4, 7],
-    profitRangeMin: -5,
-    profitRangeMax: 20,
+    profitRangeMin: 0,
+    profitRangeMax: 100,
     durationRange: [0.01, 5.0],
     durationRangeMin: 0.0,
     durationRangeMax: 5.0,
@@ -433,7 +442,9 @@ export default {
     newArr: [],
     refreshTable: [],
     typeChart: false,
-    chartLoading: false
+    chartLoading: false,
+    zeroOborot: false,
+    BidAskZero: false
   }),
   async created() {
     try {
@@ -615,10 +626,12 @@ export default {
       this.refreshChart++;
     },
     typeChart: function() {
-      // this.chartLoading = true
+      this.chartLoading = true
       this.getScatters()
       this.refreshChart++
-      this.chartLoading = false
+      setTimeout( () => {
+        this.chartLoading = false
+      }, 1000)
     }
   },
   methods: {
@@ -778,8 +791,8 @@ export default {
             id: bond.isin,
             name: bond.name,
             last_price: bond.last_price,
-            best_spros: bond.best_spros,
-            best_predl: bond.best_predl,
+            bid: bond.bid,
+            ask: bond.ask,
             oborot: bond.oborot,
             x: bond.duration,
             y: bond.profit
@@ -791,8 +804,8 @@ export default {
           id: bond.isin,
           name: bond.name,
           last_price: bond.last_price,
-          best_spros: bond.best_spros,
-          best_predl: bond.best_predl,
+          bid: bond.bid,
+          ask: bond.ask,
           oborot: bond.oborot,
           x: bond.duration,
           y: bond.bid_yield
@@ -911,7 +924,7 @@ export default {
               headerFormat:
                 '<span style="font-size: 10px">{point.point.id}</span><br><b>{point.point.name}</b><br>',
               pointFormat:
-                "Дюрация: {point.x} лет<br> Доходность: {point.y}%<br>Цена послед.: {point.last_price}<br>Лучший спрос: {point.best_spros}<br>Лучшее предл.: {point.best_predl}<br>Оборот: {point.oborot}<br>"
+                "Дюрация: {point.x} лет<br> Доходность: {point.y}%<br>Цена послед.: {point.last_price}<br>BID: {point.bid}<br>ASK: {point.ask}<br>Оборот: {point.oborot}<br>"
             },
             series: [
               {
@@ -974,6 +987,12 @@ export default {
             legend: {
               enabled: false
             },
+            tooltip: {
+              shared: true,
+              distance: 30,
+              crosshair: true,
+              pointFormat: '<span style="color:{point.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
+            },
             plotOptions: {
               series: {
                 turboThreshold: 2000,
@@ -1010,11 +1029,6 @@ export default {
                   radius: 2
                 }
               },
-              tooltip: {
-                split: true,
-                distance: 30,
-                crosshair: true
-              },
               xAxis: {
                 labels: {
                   enabled: false
@@ -1023,8 +1037,6 @@ export default {
             },
             series: [this.series2, this.series1]
           };
-          this.chart.options.tooltip = {
-          }
           this.chart.series[0].setData(this.series1.data);
           this.chart.series[1].setData(this.series2.data);
         }
@@ -1037,8 +1049,8 @@ export default {
           if (item.isin == bond) {
             sortedData.push({
               id: bond,
-              x: item.profit,
-              y: item.duration
+              y: item.profit,
+              x: item.duration
             });
           }
         });
@@ -1142,6 +1154,18 @@ export default {
           return item;
         }
       });
+
+      if( this.zeroOborot ) {
+       finalArr = finalArr.filter(item => {
+         if( item.oborot !== 0 ) return item 
+       })
+      }
+
+      if( this.BidAskZero ) {
+       finalArr = finalArr.filter(item => {
+         if( item.bid !== 0 && item.ask !== 0) return item 
+       })
+      }
 
       this.items = finalArr;
 
@@ -1287,8 +1311,6 @@ export default {
       };
       
       this.chart.addSeries(series);
-      
-      console.log(this.chart)
     },
     chartsDeleteLine(line) {
       const seriesIndex = this.chart.series.findIndex(
@@ -1359,7 +1381,7 @@ export default {
         }
       });
 
-      this.profitRangeMax = Math.ceil(profitMax);
+      // this.profitRangeMax = Math.ceil(profitMax);
       this.durationRangeMax = Math.ceil(durationMax);
       this.oborotRangeMax = Math.ceil(oborotMax / 1000000);
     },
@@ -1380,7 +1402,7 @@ export default {
         }
       });
 
-      this.profitRangeMin = Math.floor(profitMin);
+      // this.profitRangeMin = Math.floor(profitMin);
       this.durationRangeMin = Math.floor(durationMin);
       this.oborotRangeMin = Math.floor(oborotMin / 1000000);
     }
