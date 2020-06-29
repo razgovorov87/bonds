@@ -76,20 +76,26 @@ export default {
         async deleteUserBondOnList({dispatch}, {group}) {
             try {
                 const uid = await dispatch('getUid')
+                const temp = (await firebase.database().ref(`/users/${uid}/groups/${group.name}`).once('value')).val()
+                const color = temp.color
                 await firebase.database().ref(`/users/${uid}/groups/${group.name}`).remove()
                 await firebase.database().ref(`/users/${uid}/groups/${group.name}`).set({
                     'name': group.name,
-                    'bonds': group.bonds
+                    'bonds': group.bonds,
+                    color
                 })
 
             } catch (e) {throw e}
         },
         async deleteBaseBondOnList({dispatch}, {group}) {
             try {
+                const temp = (await firebase.database().ref(`/baseline/${group.name}`).once('value')).val()
+                const color = temp.color
                 await firebase.database().ref(`/baseline/${group.name}`).remove()
                 await firebase.database().ref(`/baseline/${group.name}`).set({
                     'name': group.name,
-                    'bonds': group.bonds
+                    'bonds': group.bonds,
+                    color
                 })
             } catch (e) {throw e}
         },

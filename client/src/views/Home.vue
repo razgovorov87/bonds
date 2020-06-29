@@ -1226,13 +1226,11 @@ export default {
         return
       }
       const marker = this.chart.series[idx].symbol;
-      let typeLine = this.chart.series[idx].type;
       const seriesData = this.getLine(line);
       const series = {
-        type: typeLine,
+        type: 'scatter',
         name: line.name,
         color: color,
-        lineWidth: 3,
         marker: {
           lineColor: color,
           radius: 6,
@@ -1256,19 +1254,12 @@ export default {
       
       const colors = this.chart.series[seriesIndex].color;
       const marker = this.chart.series[seriesIndex].symbol;
-      let typeLine = this.chart.series[seriesIndex].type;
 
-      if (typeLine == "line") {
-        typeLine = "spline";
-      } else if (typeLine == "spline") {
-        typeLine = "line";
-      }
       const seriesData = this.getLine(line);
       const series = {
-        type: typeLine,
+        type: 'scatter',
         name: line.name,
         color: colors,
-        lineWidth: 3,
         marker: {
           lineColor: colors,
           radius: 6,
@@ -1302,10 +1293,9 @@ export default {
       });
 
       const series = {
-        type: 'line',
+        type: 'scatter',
         name: line.name,
         color: color,
-        lineWidth: 3,
         marker: {
           lineColor: color,
           radius: 6,

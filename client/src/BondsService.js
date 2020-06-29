@@ -27,7 +27,7 @@ class BondsService {
                 const newArr = []
                 items.forEach(item => {
                     const newBond = data.find(bond => bond.isin === item.isin)
-                    if(item.last_price !== newBond.last_price) {
+                    if(item.oborot !== newBond.oborot) {
                         newArr.push(newBond)
                     }
                 });

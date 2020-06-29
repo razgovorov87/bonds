@@ -4,7 +4,7 @@
             <template v-slot:activator="{ on }">
                 <v-btn class="ml-3" v-on="on" x-small label :color="lineColor"></v-btn>
             </template>
-            <v-color-picker v-model="lineColor" mode='hexa' class="line__color" dark></v-color-picker>
+            <v-color-picker v-model="lineColor" mode='hexa' class="line__color" dark hide-canvas hide-inputs show-swatches :swatches="swatches"></v-color-picker>
             <v-btn color="success" class="elevation-0 white--text" width="100%" @click="changeColor(line)">Применить</v-btn>
         </v-menu>
         <v-menu offset-y :close-on-click="false" v-model="disableMarkerLine"> 
@@ -25,6 +25,20 @@
 export default {
     props: ['line'],
     data: () => ({
+        swatches: [
+        ['#FF5252',
+        '#E040FB',
+        '#9254ff',],
+        ['#3F51B5',
+        '#546eff',
+        '#CDDC39',],
+        ['#00ffd4',
+        '#FF9800',
+        '#95ff00',],
+        ['#8fdaff',
+        '#000000',
+        '#E91E63']
+        ],
         lineColor: '',
         disableColorPicker: 0,
         disableMarkerLine: 0,
@@ -32,6 +46,7 @@ export default {
         selectedMarker: 'mdi-circle'
     }),
     created() {
+
         this.lineColor = this.line.color
     },
     methods: {
