@@ -612,7 +612,7 @@ export default {
               }
             }, 0) 
           })
-        }, this.realTimeCount * 1000)
+        }, this.realTimeCount * 10000)
       } else {
         return
       }
@@ -1201,12 +1201,19 @@ export default {
 
       const color = this.chart.series[idx].color;
       let typeLine = this.chart.series[idx].type;
+
+      if (typeLine == "line") {
+        const lineWidth = 3;
+      } else if (typeLine == "scatter") {
+        const lineWidth = 0;
+      }
+
       const seriesData = this.getLine(line);
       const series = {
         type: typeLine,
         name: line.name,
         color: color,
-        lineWidth: 3,
+        lineWidth: lineWidth,
         marker: {
           lineColor: color,
           radius: 6,
@@ -1227,10 +1234,19 @@ export default {
       }
       const marker = this.chart.series[idx].symbol;
       const seriesData = this.getLine(line);
+      let typeLine = this.chart.series[idx].type;
+
+      if (typeLine == "line") {
+        const lineWidth = 3;
+      } else if (typeLine == "scatter") {
+        const lineWidth = 0;
+      }
+
       const series = {
-        type: 'scatter',
+        type: typeLine,
         name: line.name,
         color: color,
+        lineWidth: lineWidth,
         marker: {
           lineColor: color,
           radius: 6,
@@ -1254,12 +1270,22 @@ export default {
       
       const colors = this.chart.series[seriesIndex].color;
       const marker = this.chart.series[seriesIndex].symbol;
+      let typeLine = this.chart.series[seriesIndex].type;
+
+      if (typeLine == "line") {
+        typeLine = "scatter";
+        const lineWidth = 0;
+      } else if (typeLine == "scatter") {
+        typeLine = "line";
+        const lineWidth = 3;
+      }
 
       const seriesData = this.getLine(line);
       const series = {
-        type: 'scatter',
+        type: typeLine,
         name: line.name,
         color: colors,
+        lineWidth: lineWidth,
         marker: {
           lineColor: colors,
           radius: 6,
@@ -1268,6 +1294,7 @@ export default {
         stickyTracking: false,
         data: seriesData
       };
+
       this.chartsDeleteLine(line);
       this.chart.addSeries(series);
     },
@@ -1292,10 +1319,19 @@ export default {
         }
       });
 
+      if (resultType) {
+        typeLine = "line";
+        const lineWidth = 3;
+      } else {
+        typeLine = "scatter";
+        const lineWidth = 0;
+      }
+
       const series = {
-        type: 'scatter',
+        type: typeLine,
         name: line.name,
         color: color,
+        lineWidth: lineWidth,
         marker: {
           lineColor: color,
           radius: 6,
