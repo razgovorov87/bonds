@@ -1201,11 +1201,12 @@ export default {
 
       const color = this.chart.series[idx].color;
       let typeLine = this.chart.series[idx].type;
+      let lineWidth = 3;
 
       if (typeLine == "line") {
-        const lineWidth = 3;
+        lineWidth = 3;
       } else if (typeLine == "scatter") {
-        const lineWidth = 0;
+        lineWidth = 0;
       }
 
       const seriesData = this.getLine(line);
@@ -1235,11 +1236,12 @@ export default {
       const marker = this.chart.series[idx].symbol;
       const seriesData = this.getLine(line);
       let typeLine = this.chart.series[idx].type;
+      let lineWidth = 3;
 
       if (typeLine == "line") {
-        const lineWidth = 3;
+        lineWidth = 3;
       } else if (typeLine == "scatter") {
-        const lineWidth = 0;
+        lineWidth = 0;
       }
 
       const series = {
@@ -1271,13 +1273,14 @@ export default {
       const colors = this.chart.series[seriesIndex].color;
       const marker = this.chart.series[seriesIndex].symbol;
       let typeLine = this.chart.series[seriesIndex].type;
+      let lineWidth = 3;
 
       if (typeLine == "line") {
         typeLine = "scatter";
-        const lineWidth = 0;
+        lineWidth = 0;
       } else if (typeLine == "scatter") {
         typeLine = "line";
-        const lineWidth = 3;
+        lineWidth = 3;
       }
 
       const seriesData = this.getLine(line);
@@ -1305,6 +1308,7 @@ export default {
       );
       let typeLine = false;
       let resultType = false;
+      let lineWidth = 3;
 
       if (seriesIndex != -1) {
         this.snackbar = true;
@@ -1321,10 +1325,10 @@ export default {
 
       if (resultType) {
         typeLine = "line";
-        const lineWidth = 3;
+        lineWidth = 3;
       } else {
         typeLine = "scatter";
-        const lineWidth = 0;
+        lineWidth = 0;
       }
 
       const series = {
