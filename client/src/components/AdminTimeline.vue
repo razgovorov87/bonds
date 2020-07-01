@@ -6,7 +6,7 @@
             indeterminate
         ></v-progress-circular>
     </div>
-    <v-timeline v-else dense>
+    <!-- <v-timeline v-else dense>
         <v-timeline-item small v-for="log in logList" :key="log.version" :color="log.color">
             <v-card class="elevation-2">
                 <v-card-title class="d-flex justify-space-between">
@@ -43,7 +43,11 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
-    </v-timeline>
+    </v-timeline> -->
+    <div v-else class="d-flex justify-center align-center flex-column">
+        <img src="@/assets/empty.svg" alt="empty">
+        <span class="subtitle-1 font-weight-bold">Пока что здесь пусто</span>
+    </div>
 </template>
 
 <script>
