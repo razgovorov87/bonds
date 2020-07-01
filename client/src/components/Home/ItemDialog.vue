@@ -68,13 +68,6 @@
 
                 <v-list-item>
                   <span class="subtitle-2">
-                    Лучший спрос:
-                    <span class="font-weight-bold ml-2">{{dialog.bond.best_spros}}</span>
-                  </span>
-                </v-list-item>
-
-                <v-list-item>
-                  <span class="subtitle-2">
                     Предложение:
                     <span class="font-weight-bold ml-2">{{dialog.bond.ask}}</span>
                   </span>
@@ -82,10 +75,17 @@
 
                 <v-list-item>
                   <span class="subtitle-2">
-                    Лучшее предложение:
+                    BID yield:
+                    <span class="font-weight-bold ml-2">{{dialog.bond.bid_yield}}</span>
+                  </span>
+                </v-list-item>
+
+                <v-list-item>
+                  <span class="subtitle-2">
+                    ASK yield:
                     <span
                       class="font-weight-bold ml-2"
-                    >{{dialog.bond.best_predl}}</span>
+                    >{{dialog.bond.ask_yield}}</span>
                   </span>
                 </v-list-item>
 

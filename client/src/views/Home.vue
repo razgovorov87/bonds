@@ -404,7 +404,6 @@ export default {
       { text: "ISIN", value: "isin", sortable: false },
       { text: "Доходность", value: "profit" },
       { text: "Дюрация", value: "duration" },
-      { text: "Цена послед.", value: "last_price" },
       { text: "BID", value: "bid" },
       { text: "ASK", value: "ask" },
       { text: "BID yield", value: "bid_yield" },
