@@ -26,18 +26,16 @@ export default {
     props: ['line'],
     data: () => ({
         swatches: [
-        ['#FF5252',
-        '#E040FB',
-        '#9254ff',],
-        ['#3F51B5',
-        '#546eff',
-        '#CDDC39',],
-        ['#00ffd4',
-        '#FF9800',
-        '#95ff00',],
-        ['#8fdaff',
-        '#000000',
-        '#E91E63']
+        ['#FF0000',
+        '#FF8C00',],
+        ['#FFFF00',
+        '#00FF00'],
+        ['#00CED1',
+        '#0000FF',],
+        ['#FF00FF',
+        '#000000',],
+        ['#808080',
+        '#B8860B']
         ],
         lineColor: '',
         disableColorPicker: 0,

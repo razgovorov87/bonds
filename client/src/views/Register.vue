@@ -10,14 +10,14 @@
                 v-model.trim="name"
                 label="Имя"
                 :rules="nameRules"
-                prepend-icon="mdi-account-outline"
+                prepend-icon="mdi-account-edit"
             >
             </v-text-field>
             <v-text-field
                 v-model.trim="email"
-                label="Email"
+                label="Логин"
                 :rules="emailRules"
-                prepend-icon="mdi-email-outline"
+                prepend-icon="mdi-account-outline"
             >
             </v-text-field>
             <v-text-field
@@ -57,8 +57,8 @@ export default {
         ],
         email: '',
         emailRules: [
-            v => !!v || 'Введите Email',
-            v => /.+@.+/.test(v) || 'Неверный Email',
+            v => !!v || 'Введите логин',
+            v => /[a-zA-Z0-9]/.test(v) || 'Логин должен содержать только латинские буквы',
         ],
         password: '',
         passwordRules: [
@@ -68,18 +68,19 @@ export default {
     }),
     validations: {
         name: {required},
-        email: {email, required},
+        email: {required},
         password: {required, minLength: minLength(6)}
     },
     methods: {
         async submitHandler() {
-            if(this.$v.$invalid) {
+            if(this.$v.$invalid || !/[a-zA-Z0-9]/.test(this.email)) {
                 this.$v.$touch()
                 return
             }
+
             const formData = {
                 name: this.name,
-                email: this.email,
+                email: this.email + '@gmail.com',
                 password: this.password
             }
             try {

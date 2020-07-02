@@ -20,9 +20,13 @@
                         </v-avatar>
                     </template>
 
+                    <template v-slot:item.email="{ item }">
+                        {{item.email.substring(0, item.email.length - 10)}}
+                    </template>
+
                     <template v-slot:item.admin="{ item }">
                         <v-chip v-if="item.admin" small label class="red lighten-4 red--text mr-2 font-weight-bold">Администратор</v-chip>
-                        <v-chip small label class="green lighten-4 green--text mr-2 font-weight-bold">Пользователь</v-chip>
+                        <v-chip v-else small label class="green lighten-4 green--text mr-2 font-weight-bold">Пользователь</v-chip>
                         <v-menu
                             transition="slide-x-transition"
                             :close-on-content-click="false"
@@ -82,7 +86,7 @@ export default {
         usersTableHeaders: [
             {text: '', value: 'avatar', sortable: false, width: '50px', align: 'center'},
             {text: 'Имя', value: 'name'},
-            {text: 'Email', value: 'email'},
+            {text: 'Логин', value: 'email'},
             {text: 'Права', value: 'admin'},
             {text: 'Кол-во групп', value: 'groups', align: 'center'}
         ],

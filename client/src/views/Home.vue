@@ -35,15 +35,15 @@
                 <v-card elevation="0">
                   <v-row>
                     <v-col cols="12">
-                      <v-form @submit.prevent="filterData(bonds)" style="min-width: 100%">
+                      <v-form @submit.prevent="filterData(bonds, 'user')" style="min-width: 100%">
                         <v-row align="center" justify="space-between">
                           <v-row justify="center" style="width: 100%">
                             <v-col cols="2">
-                              <v-text-field v-model="filterName" label="Название" outlined>asdasd</v-text-field>
+                              <v-text-field v-model="filterName" label="Название" outlined></v-text-field>
                             </v-col>
 
                             <v-col cols="2">
-                              <v-text-field v-model="filterIsin" label="ISIN" outlined>asdasd</v-text-field>
+                              <v-text-field v-model="filterIsin" label="ISIN" outlined></v-text-field>
                             </v-col>
 
                             <v-col cols="4" align="stretch">
@@ -91,7 +91,35 @@
                                 outlined
                                 class="mr-3 subtitle-2"
                                 autowidth="false"
-                              ></v-combobox>
+                                multiple
+                                small-chips
+                              >
+
+                                <template v-slot:prepend-item>
+                                  <v-list-item ripple @click="toggle1">
+                                    <v-list-item-action>
+                                      <v-icon
+                                        :color="emitentValue.length > 0 ? 'indigo darken-4' : ''"
+                                      >{{ icon }}</v-icon>
+                                    </v-list-item-action>
+                                    <v-list-item-content>
+                                      <v-list-item-title>Выбрать все</v-list-item-title>
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                  <v-divider class="mt-2"></v-divider>
+                                </template>
+
+
+                                <template v-slot:selection="{ item, index }">
+                                  <v-chip v-if="index === 0">
+                                    <span>{{ item }}</span>
+                                  </v-chip>
+                                  <span
+                                    v-if="index === 1"
+                                    class="grey--text caption"
+                                  >(+{{ emitentValue.length - 1 }} других)</span>
+                                </template>
+                              </v-combobox>
                             </v-col>
 
                             <v-col cols="2">
@@ -102,7 +130,34 @@
                                 outlined
                                 class="mr-3 subtitle-2"
                                 autowidth="false"
-                              ></v-combobox>
+                                multiple
+                                small-chips
+                              >
+
+                                <template v-slot:prepend-item>
+                                  <v-list-item ripple @click="toggle2">
+                                    <v-list-item-action>
+                                      <v-icon
+                                        :color="sectorValue.length > 0 ? 'indigo darken-4' : ''"
+                                      >{{ icon }}</v-icon>
+                                    </v-list-item-action>
+                                    <v-list-item-content>
+                                      <v-list-item-title>Выбрать все</v-list-item-title>
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                  <v-divider class="mt-2"></v-divider>
+                                </template>
+
+                                <template v-slot:selection="{ item, index }">
+                                  <v-chip v-if="index === 0">
+                                    <span>{{ item }}</span>
+                                  </v-chip>
+                                  <span
+                                    v-if="index === 1"
+                                    class="grey--text caption"
+                                  >(+{{ sectorValue.length - 1 }} других)</span>
+                                </template>
+                              </v-combobox>
                             </v-col>
                           </v-row>
 
@@ -337,18 +392,16 @@ export default {
   name: "Home",
   data: () => ({
     colors: [
-      "#FF5252",
-      "#E040FB",
-      "#9254ff",
-      "#3F51B5",
-      "#546eff",
-      "#CDDC39",
-      "#00ffd4",
-      "#FF9800",
-      "#95ff00",
-      "#8fdaff",
-      "#000000",
-      "#E91E63"
+      '#FF0000',
+      '#FF8C00',
+      '#FFFF00',
+      '#00FF00',
+      '#00CED1',
+      '#0000FF',
+      '#FF00FF',
+      '#000000',
+      '#808080',
+      '#B8860B'
     ],
     settingsDrawer: false,
     dialogAddUserGroup: false,
@@ -460,9 +513,22 @@ export default {
         this.oborotRange = [this.oborotRangeMin, this.oborotRangeMax];
       }, 0);
       this.items = this.bonds
-      this.filterData(this.bonds);
       this.getEmitentItems();
       this.getSectorItems();
+      this.emitentValue = this.emitentItems
+      this.sectorValue = this.sectorItems
+      const filterData = await this.$store.dispatch('fetchFilterData')
+      if(filterData) {
+        this.filterName = filterData.filterName;
+        this.filterIsin = filterData.filterIsin;
+        this.emitentValue = filterData.emitentValue;
+        this.sectorValue = filterData.sectorValue;
+        this.profitRange = filterData.profitRange;
+        this.durationRange = filterData.durationRange;
+        this.oborotRange = filterData.oborotRange;
+        this.typeValue = filterData.typeValue;
+      }
+      this.filterData(this.bonds);
       const bg = this.theme === "dark" ? "#282c3d" : "#fff";
       const textcolor = this.theme === "dark" ? "#fff" : "#333";
       this.chartOptions = {
@@ -642,6 +708,24 @@ export default {
           this.typeValue = [];
         } else {
           this.typeValue = this.typeItems.slice();
+        }
+      });
+    },
+    toggle1() {
+      this.$nextTick(() => {
+        if (this.likesAllItems1) {
+          this.emitentValue = [];
+        } else {
+          this.emitentValue = this.emitentItems.slice();
+        }
+      });
+    },
+    toggle2() {
+      this.$nextTick(() => {
+        if (this.likesAllItems2) {
+          this.sectorValue = [];
+        } else {
+          this.sectorValue = this.sectorItems.slice();
         }
       });
     },
@@ -1067,7 +1151,7 @@ export default {
 
       return sortedData;
     },
-    async filterData(bonds) {
+    async filterData(bonds, type) {
       const typesName = this.typeValue;
       const filtered = bonds.filter(function(bond) {
         switch (bond.type) {
@@ -1113,23 +1197,31 @@ export default {
         });
       }
 
-      if (this.emitentValue) {
-        const emitent = this.emitentValue;
-        finalArr = finalArr.filter(item => {
-          if (item.emitent.shortName == emitent) {
-            return item;
+      const emitent = this.emitentValue;
+      let emitentArr = []
+      finalArr.forEach(item => {
+        emitent.forEach(emi => {
+          if (item.emitent.shortName === emi) {
+            emitentArr.push(item)
           }
-        });
-      }
+        })
+      });
+      
+      finalArr = emitentArr
 
-      if (this.sectorValue) {
-        const sector = this.sectorValue;
-        finalArr = finalArr.filter(item => {
-          if (item.emitent.sector == sector) {
-            return item;
+      
+
+      const sector = this.sectorValue
+      let sectorArr = []
+      finalArr.forEach(item => {
+        sector.forEach(sec => {
+          if(item.emitent.sector === sec) {
+            sectorArr.push(item)
           }
-        });
-      }
+        })
+      });
+
+      finalArr = sectorArr
 
       finalArr = finalArr.filter(item => {
         if (
@@ -1175,6 +1267,22 @@ export default {
 
       this.getScatters();
 
+      if(type === 'user') {
+        try {
+          const filterData = {
+            filterName: this.filterName,
+            filterIsin: this.filterIsin,
+            emitentValue: this.emitentValue,
+            sectorValue: this.sectorValue,
+            profitRange: this.profitRange,
+            durationRange: this.durationRange,
+            oborotRange: this.oborotRange,
+            typeValue: this.typeValue,
+          }
+          await this.$store.dispatch('saveFilterData', filterData)
+        } catch (e) {throw e}
+      }
+
       setTimeout(() => {
         this.loadingOverlay = false;
       }, 500);
@@ -1182,12 +1290,14 @@ export default {
     resetFilters() {
       this.filterName = "";
       this.filterIsin = "";
-      this.emitentValue = "";
-      this.sectorValue = "";
+      this.emitentValue = this.emitentItems;
+      this.sectorValue = this.sectorItems;
       this.profitRange = [4, 7];
       this.durationRange = [0, 5];
       this.oborotRange = [this.oborotRangeMin, this.oborotRangeMax];
       this.typeValue = this.typeItems;
+      this.zeroOborot = false
+      this.BidAskZero = false
       this.items = this.bonds;
       this.filterData(this.bonds);
     },
@@ -1392,11 +1502,15 @@ export default {
 
       tempArr.sort();
 
+
       for (let str of tempArr) {
         if (!this.sectorItems.includes(str) && str != null) {
           this.sectorItems.push(str);
         }
       }
+
+      
+      this.sectorItems.unshift(...this.sectorItems.splice(1, 1))
     },
     getMaxValue() {
       let profitMax = 0;
@@ -1444,6 +1558,12 @@ export default {
   computed: {
     likesAllItems() {
       return this.typeValue.length === this.typeItems.length;
+    },
+    likesAllItems1() {
+      return this.emitentValue.length === this.emitentItems.length;
+    },
+    likesAllItems2() {
+      return this.sectorValue.length === this.sectorItems.length;
     },
     likesSomeItems() {
       return this.typeValue.length > 0 && !this.likesAllItems;

@@ -220,6 +220,14 @@ import BondsService from '../BondsService'
       typeChart: false
     }),
     async created() {
+      
+      const uid = await this.$store.dispatch('getUid')
+      if( !uid ) {
+        this.$router.push('/login')
+        return
+      }
+
+
       if (!Object.keys(this.$store.getters.info).length) {
         await this.$store.dispatch('fetchInfo')
       }
@@ -231,15 +239,9 @@ import BondsService from '../BondsService'
         this.dark = false
         this.$vuetify.theme.dark = false
       }
-      
+    
 
       this.loading = false
-    },
-    async mounted() {
-      const uid = await this.$store.dispatch('getUid')
-      if( !uid ) {
-        this.$router.push('/login')
-      }
     },
     methods: {
       async changeTheme() {

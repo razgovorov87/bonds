@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import auth from './auth'
 import info from './info'
 import group from './group'
+import filter from './filter'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -15,6 +16,7 @@ export default new Vuex.Store({
   modules: {
     auth,
     info,
-    group
+    group,
+    filter
   }
 })

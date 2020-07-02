@@ -9,7 +9,7 @@
         >
             <v-text-field
                 v-model.trim="email"
-                label="Email"
+                label="Логин"
                 :rules="emailRules"
                 prepend-icon="mdi-account-outline"
             >
@@ -66,8 +66,8 @@ export default {
         snackbarText: '',
         email: '',
         emailRules: [
-            v => !!v || 'Введите Email',
-            v => /.+@.+/.test(v) || 'Неверный Email',
+            v => !!v || 'Введите логин',
+            v => /[a-zA-Z0-9]/.test(v) || 'Логин должен содержать только латинские буквы',
         ],
         password: '',
         passwordRules: [
@@ -76,17 +76,17 @@ export default {
         ]
     }),
     validations: {
-        email: {email, required},
+        email: {required},
         password: {required, minLength: minLength(6)}
     },
     methods: {
         async submitHandler() {
-            if(this.$v.$invalid) {
+            if(this.$v.$invalid || !/[a-zA-Z0-9]/.test(this.email)) {
                 this.$v.$touch()
                 return
             }
             const formData = {
-                email: this.email,
+                email: this.email + '@gmail.com',
                 password: this.password
             }
             
