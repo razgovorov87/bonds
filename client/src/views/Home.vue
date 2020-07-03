@@ -498,7 +498,8 @@ export default {
     typeChart: false,
     chartLoading: false,
     zeroOborot: false,
-    BidAskZero: false
+    BidAskZero: false,
+    drawPointName: false
   }),
   async created() {
     try {
@@ -632,7 +633,7 @@ export default {
         },
         series: [
           {
-            data: this.scatters
+            data: this.scatters,
           }
         ]
       };
@@ -643,6 +644,53 @@ export default {
     }
   },
   watch: {
+    drawPointName: function() {
+      if(this.typeChart) {
+        if(this.drawPointName) {
+          const data = this.series2.data
+          this.chartOptions.series[0] = {
+            data: data,
+            dataLabels: {
+              enabled: true,
+              format: "{point.name}"
+            },
+            name: 'Ask доходность',
+            lineWidth: 0, 
+            marker: {
+              enabled: true,
+              radius: 4
+            }
+          }
+        } else {
+          const data = this.series2.data
+          this.chartOptions.series[0] = {
+            data: data,
+            name: 'Ask доходность',
+            lineWidth: 0, 
+            marker: {
+              enabled: true,
+              radius: 4
+            }
+          }
+        }
+        this.refreshChart++
+      } else {
+        if(this.drawPointName) {
+          this.chartOptions.series[0] = {
+            data: this.scatters,
+            dataLabels: {
+              enabled: true,
+              format: "{point.name}"
+            }
+          }
+        } else {
+          this.chartOptions.series[0] = {
+            data: this.scatters
+          }
+        }
+        this.refreshChart++
+      }
+    },
     realTimeTrigger: async function() {
       
       if(this.realTimeTrigger) {
@@ -694,6 +742,8 @@ export default {
     },
     typeChart: function() {
       this.chartLoading = true
+      this.drawPointName = false
+      this.$parent.$parent.$parent.drawPointName = false
       this.getScatters()
       this.refreshChart++
       setTimeout( () => {

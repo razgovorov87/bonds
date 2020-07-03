@@ -92,6 +92,8 @@
           </template>
         </v-switch>
         <v-divider vertical class="mx-5"></v-divider>
+        <v-switch v-model="drawPointName" inset color="white" label="Отобразить название точек" @change="toggleDrawName"></v-switch>
+        <v-divider vertical class="mx-5"></v-divider>
         <v-chip label :color="realTime ? 'success' : ''" class="real__time__chip">
           <v-switch v-model="realTime" color="white" @change="updateRealTime">
             <template v-slot:append>
@@ -217,7 +219,8 @@ import BondsService from '../BondsService'
       loading: true,
       realTime: false,
       realTimeMinute: 5,
-      typeChart: false
+      typeChart: false,
+      drawPointName: false
     }),
     async created() {
       
@@ -291,6 +294,9 @@ import BondsService from '../BondsService'
       realTimeCount(minute) {
         this.realTimeMinute = minute
         this.$refs.childComponent.realTimeCount = this.realTimeMinute
+      },
+      toggleDrawName() {
+        this.$refs.childComponent.drawPointName = this.drawPointName
       },
       editTypeChart() {
         this.$refs.childComponent.typeChart = this.typeChart
