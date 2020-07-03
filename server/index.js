@@ -14,7 +14,7 @@ app.use(cors());
 if(process.env.NODE_ENV === 'production') {
     app.use('/', express.static(path.join(__dirname, '../', 'client', 'dist')))
 
-    app.use('/api/bonds', bonds);
+    // app.use('/api/bonds', bonds);
     // app.get('*', (req, res) => {
     //     res.sendFile(path.resolve(__dirname, '../', 'server', 'routes', 'api', 'bonds.js'))
     // })

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const url = 'http://82.148.31.138:80/api/bonds';
-const PythonUrl = 'http://82.148.31.138:9090';
+const PythonUrl = 'https://82.148.31.138:9090';
 
 class BondsService {
     //get
