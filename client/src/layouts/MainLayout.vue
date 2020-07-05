@@ -85,14 +85,34 @@
         <v-divider vertical class="mx-5"></v-divider>
         <v-switch inset v-model="typeChart" @change="editTypeChart" class="d-flex align-center">
           <template v-slot:prepend>
-            <span>Сделки</span>
+            <!-- <span>Сделки</span> -->
+            <div class="d-flex flex-column">
+              <v-icon>mdi-circle-medium</v-icon>
+            </div>
           </template>
-          <template v-slot:append>
-            <span>Котировки</span>
+          <template v-slot:label>
+            <div class="d-flex flex-column">
+              <v-icon id="abc__icon">mdi-circle-medium</v-icon>
+              <v-icon>mdi-circle-medium</v-icon>
+            </div>
+            <!-- <span>Котировки</span> -->
           </template>
         </v-switch>
         <v-divider vertical class="mx-5"></v-divider>
-        <v-switch v-model="drawPointName" inset color="white" label="Отобразить название точек" @change="toggleDrawName"></v-switch>
+        <v-switch v-model="drawPointName" inset color="white" @change="toggleDrawName">
+          <template v-slot:label>
+            <div class="d-flex flex-column">
+              <!-- <v-icon id="abc__icon">mdi-alphabetical</v-icon>
+              <v-icon>mdi-circle-medium</v-icon> -->
+              <v-icon>mdi-alphabetical-variant</v-icon>
+            </div>
+          </template>
+          <template v-slot:prepend>
+            <div class="d-flex flex-column">
+              <v-icon style="margin-right: 5px;">mdi-alphabetical-variant-off</v-icon>
+            </div>
+          </template>
+        </v-switch>
         <v-divider vertical class="mx-5"></v-divider>
         <v-chip label :color="realTime ? 'success' : ''" class="real__time__chip">
           <v-switch v-model="realTime" color="white" @change="updateRealTime">
@@ -202,6 +222,12 @@ html {
 }
 .real__time__count {
   border-radius: 0 5px 5px 0 !important;
+}
+#abc__icon {
+  margin-bottom: -12px;
+}
+.v-toolbar .v-input {
+  align-items: center;
 }
 </style>
 

@@ -304,6 +304,7 @@
             show-select
             item-key="isin"
             locale="ru-RU"
+            :key="refreshTable"
           >
             <template v-slot:item.name="{ item }">
               <v-btn color="primary" @click="selectScatter(item)">{{item.name}}</v-btn>
@@ -701,7 +702,7 @@ export default {
           console.log('Обновились: ', newArr)
           newArr.forEach(newBond => {
             const idx = this.items.findIndex(item => item.isin === newBond.isin)
-            const colorClass = this.items[idx].last_price < newBond.last_price ? 'highlight__green' : 'highlight__red'
+            const colorClass = this.items[idx].oborot < newBond.oborot ? 'highlight__green' : 'highlight__red'
             this.items[idx] = newBond
             this.refreshTable++
             setTimeout( async () => {

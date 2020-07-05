@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const url = 'https://82.148.31.138:80/api/bonds';
-const PythonUrl = 'https://82.148.31.138:9090';
+const url = 'http://82.148.31.138:80/api/bonds';
+const PythonUrl = 'http://82.148.31.138:8080';
 
 class BondsService {
     //get
@@ -22,8 +22,8 @@ class BondsService {
     static RealTime(items) {
         return new Promise(async (resolve, reject) => {
             try {
-                const res = await axios.get(url);
-                const data = res.data;
+                const res = await axios.get(PythonUrl);
+                let data = res.data;
                 const newArr = []
                 items.forEach(item => {
                     const newBond = data.find(bond => bond.isin === item.isin)
