@@ -19,6 +19,10 @@
         <highcharts ref="chart" v-else :options="chartOptions" :key="refreshChart"></highcharts>
       </v-card>
 
+      <v-card class="mt-3">
+        <Gistorgamma :chartData="scatters" :key="refreshChart" />
+      </v-card>
+
       <div class="table mt-5">
         <v-skeleton-loader v-if="loading" type="table"></v-skeleton-loader>
         <v-card v-else>
@@ -384,6 +388,8 @@ import { Chart } from "highcharts-vue";
 import Highcharts from "highcharts";
 import stockInit from "highcharts/modules/stock";
 import ItemDialog from "@/components/Home/ItemDialog";
+import Gistorgamma from '@/components/Home/Gistogramma'
+
 
 import { required } from "vuelidate/lib/validators";
 
@@ -1641,7 +1647,8 @@ export default {
     highcharts: Chart,
     Settings,
     Loader,
-    ItemDialog: ItemDialog
+    ItemDialog: ItemDialog,
+    Gistorgamma
   }
 };
 </script>
