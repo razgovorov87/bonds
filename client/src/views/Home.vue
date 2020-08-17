@@ -20,7 +20,8 @@
       </v-card>
 
       <v-card class="mt-3">
-        <Gistorgamma :chartData="scatters" :key="refreshChart" />
+        <v-skeleton-loader v-if="chartLoading || loading" type="image"></v-skeleton-loader>
+        <highcharts ref="gistogramma" v-else :options="gistoOptions"></highcharts>
       </v-card>
 
       <div class="table mt-5">
@@ -388,7 +389,6 @@ import { Chart } from "highcharts-vue";
 import Highcharts from "highcharts";
 import stockInit from "highcharts/modules/stock";
 import ItemDialog from "@/components/Home/ItemDialog";
-import Gistorgamma from '@/components/Home/Gistogramma'
 
 
 import { required } from "vuelidate/lib/validators";
@@ -506,7 +506,8 @@ export default {
     chartLoading: false,
     zeroOborot: false,
     BidAskZero: false,
-    drawPointName: false
+    drawPointName: false,
+    gistoOptions: {}
   }),
   async created() {
     try {
@@ -644,6 +645,32 @@ export default {
           }
         ]
       };
+      this.gistoOptions = {
+          chart: {
+              height: 300,
+              type: 'column'
+          },
+          events: {
+              load: (function(self) {
+                  return function() {
+                      self.chart = this;
+                  };
+              })(this)
+          },
+          title: {
+              text: ""
+          },
+          yAxis: {
+              type: 'logarithmic',
+              title: {
+                  text: "Оборот"
+              },
+          },
+          legend: {
+              enabled: false
+          },
+          series: [{name: 'Оборот', data: []}]
+      }
       this.loading = false;
       this.loadingOverlay = false;
     } catch (e) {
@@ -1075,6 +1102,21 @@ export default {
             ]
           };
           this.chart.options.chart.type = 'scatter'
+
+          const gistoArr = []
+
+          this.items.forEach( point => {
+            gistoArr.push({
+              ask: point.ask,
+              bid: point.bid,
+              x: point.duration,
+              y: point.oborot
+            })
+          })
+
+          
+          
+          this.$children[2].$children[0].chart.series[0].setData(gistoArr)
           this.chart.series[0].setData(this.scatters);
         } else {
           this.chartOptions = {
@@ -1179,6 +1221,20 @@ export default {
             },
             series: [this.series2, this.series1]
           };
+
+          const gistoArr = []
+
+          this.items.forEach( point => {
+            gistoArr.push({
+              ask: point.ask,
+              bid: point.bid,
+              x: point.duration,
+              y: point.oborot
+            })
+          })
+
+          this.$children[2].$children[0].chart.series[0].setData(gistoArr)
+
           this.chart.series[0].setData(this.series1.data);
           this.chart.series[1].setData(this.series2.data);
         }
@@ -1647,8 +1703,7 @@ export default {
     highcharts: Chart,
     Settings,
     Loader,
-    ItemDialog: ItemDialog,
-    Gistorgamma
+    ItemDialog: ItemDialog
   }
 };
 </script>
