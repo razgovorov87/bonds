@@ -27,7 +27,7 @@
       <div class="table mt-5">
         <v-skeleton-loader v-if="loading" type="table"></v-skeleton-loader>
         <v-card v-else>
-          <v-expansion-panels flat>
+          <v-expansion-panels flat multiple>
             <v-expansion-panel style="border-bottom: 1px solid #d4d4d4;">
               <v-expansion-panel-header>
                 <v-row no-gutters>
@@ -392,8 +392,8 @@
 }
 
 #bonds_chart {
-  min-height: 100vh;
-  max-height: 100vh;
+  min-height: 92vh;
+  max-height: 92vh;
 }
 </style>
 
