@@ -470,7 +470,7 @@ export default {
       { text: "ASK yield", value: "ask_yield" },
       { text: "Оборот", value: "oborot" },
       { text: "Тип", value: "type", width: "243px" },
-      { text: "Эмитент", value: "emitent.shortName", width: "240px" },
+      { text: "Эмитент", value: "emitent.shortname", width: "240px" },
       { text: "Сектор", value: "emitent.sector", width: "240px" }
     ],
     loading: true,
@@ -674,7 +674,7 @@ export default {
       this.loading = false;
       this.loadingOverlay = false;
     } catch (e) {
-      this.error = e.message;
+      throw e
     }
   },
   watch: {
@@ -1314,7 +1314,7 @@ export default {
       let emitentArr = []
       finalArr.forEach(item => {
         emitent.forEach(emi => {
-          if (item.emitent.shortName === emi) {
+          if (item.emitent.shortname === emi) {
             emitentArr.push(item)
           }
         })
@@ -1595,8 +1595,8 @@ export default {
     },
     getEmitentItems() {
       const tempArr = [];
-      this.items.map(items => {
-        tempArr.push(items.emitent.shortName);
+      this.items.map(item => {
+        tempArr.push(item.emitent.shortname);
       });
 
       tempArr.sort();
@@ -1606,6 +1606,7 @@ export default {
           this.emitentItems.push(str);
         }
       }
+      
     },
     getSectorItems() {
       const tempArr = [];
