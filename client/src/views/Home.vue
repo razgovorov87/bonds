@@ -16,7 +16,7 @@
     <v-col cols="12" style="padding-top: 0;">
       <v-card>
         <v-skeleton-loader v-if="chartLoading || loading" type="image"></v-skeleton-loader>
-        <highcharts ref="chart" v-else :options="chartOptions" :key="refreshChart"></highcharts>
+        <highcharts ref="chart" v-else :options="chartOptions" :key="refreshChart" id="bonds_chart"></highcharts>
       </v-card>
 
       <v-card class="mt-3">
@@ -299,22 +299,33 @@
                 </v-card>
               </v-expansion-panel-content>
             </v-expansion-panel>
+            <v-expansion-panel style="border-bottom: 1px solid #d4d4d4;">
+              <v-expansion-panel-header>
+                <v-row no-gutters>
+                  <v-col cols="12" class="text-center">
+                    <v-chip class="gray--text text-uppercase caption ma-0">Таблица</v-chip>
+                  </v-col>
+                </v-row>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-data-table
+                  v-model="selected"
+                  :headers="headers"
+                  :items-per-page="15"
+                  :items="items"
+                  class="elevation-2"
+                  show-select
+                  item-key="isin"
+                  locale="ru-RU"
+                  :key="refreshTable"
+                >
+                  <template v-slot:item.name="{ item }">
+                    <v-btn color="primary" @click="selectScatter(item)">{{item.name}}</v-btn>
+                  </template>
+                </v-data-table>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
           </v-expansion-panels>
-          <v-data-table
-            v-model="selected"
-            :headers="headers"
-            :items-per-page="15"
-            :items="items"
-            class="elevation-2"
-            show-select
-            item-key="isin"
-            locale="ru-RU"
-            :key="refreshTable"
-          >
-            <template v-slot:item.name="{ item }">
-              <v-btn color="primary" @click="selectScatter(item)">{{item.name}}</v-btn>
-            </template>
-          </v-data-table>
         </v-card>
       </div>
     </v-col>
@@ -378,6 +389,11 @@
 }
 .v-skeleton-loader__image {
   height: 700px !important;
+}
+
+#bonds_chart {
+  min-height: 100vh;
+  max-height: 100vh;
 }
 </style>
 
@@ -542,7 +558,6 @@ export default {
       const textcolor = this.theme === "dark" ? "#fff" : "#333";
       this.chartOptions = {
         chart: {
-          height: 700,
           backgroundColor: bg,
           amimation: {
             duration: 500
@@ -669,6 +684,13 @@ export default {
           legend: {
               enabled: false
           },
+          
+        tooltip: {
+          headerFormat:
+            '<span style="font-size: 10px">{point.point.isin}</span><br><b>{point.point.name}</b><br>',
+          pointFormat:
+            "Дюрация: {point.x} лет<br>Оборот: {point.oborot}<br>"
+        },
           series: [{name: 'Оборот', data: []}]
       }
       this.loading = false;
@@ -998,7 +1020,6 @@ export default {
         if( this.typeChart === false) {
           this.chartOptions = {
             chart: {
-              height: 700,
               backgroundColor: bg,
               amimation: {
                 duration: 500
@@ -1107,6 +1128,7 @@ export default {
 
           this.items.forEach( point => {
             gistoArr.push({
+              ...point,
               ask: point.ask,
               bid: point.bid,
               x: point.duration,
@@ -1121,7 +1143,6 @@ export default {
         } else {
           this.chartOptions = {
             chart: {
-              height: 700,
               backgroundColor: bg,
               amimation: {
                 duration: 500
